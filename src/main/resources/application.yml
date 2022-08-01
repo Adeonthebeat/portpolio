@@ -1,0 +1,25 @@
+# 配置tomcat端口号
+server:
+  port: 8082
+
+spring:
+  datasource:
+    driverClassName: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:orcl_high?TNS_ADMIN=./Users/leehyeok/codingTest/Wallet_orcl
+    username: admin
+    password: Dkepqk780200
+
+  management:
+    endpoints.enabled-by-default=false
+    endpoint.info.enabled=true
+
+mybatis:
+  type-aliases-package: com.xxx.xxx.pojo
+  mapper-locations:
+    - classpath:mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com.xxx: debug
