@@ -1,24 +1,39 @@
 # 配置tomcat端口号
 server:
   port: 8082
+  error:
+    whitelabel:
+      enabled: false
 
 spring:
+  servlet:
+    encoding:
+      charset:UTF-8
+  mvc:
+    view:
+      prefix: /WEB-INF/views
+      suffix: .jsp
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    encoding:
+      charset: UTF-8
   datasource:
-    driverClassName: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:orcl_high?TNS_ADMIN=./Users/leehyeok/codingTest/Wallet_orcl
+    driverClassName: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@orcl_high?TNS_ADMIN=./src/main/resources/Wallet_orcl
     username: admin
     password: Dkepqk780200
-
   management:
     endpoints.enabled-by-default=false
     endpoint.info.enabled=true
 
+  freemarker:
+    checkTemplateLocation: false
+
 mybatis:
-  type-aliases-package: com.xxx.xxx.pojo
+  #type-aliases-package: com.ade.portfolio.*.mapper
   mapper-locations:
-    - classpath:mappers/*.xml
-  configuration:
-    map-underscore-to-camel-case: true
+    - classpath*:/mappers/*/*.xml
 
 logging:
   level:
