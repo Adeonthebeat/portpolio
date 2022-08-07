@@ -16,8 +16,9 @@ spring:
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
-    encoding:
-      charset: UTF-8
+    suffix: .html
+    mode : HTML
+    encoding: UTF-8
   datasource:
     driverClassName: oracle.jdbc.driver.OracleDriver
     url: jdbc:oracle:thin:@orcl_high?TNS_ADMIN=./src/main/resources/Wallet_orcl

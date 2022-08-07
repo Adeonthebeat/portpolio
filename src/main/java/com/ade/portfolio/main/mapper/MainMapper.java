@@ -37,14 +37,14 @@ public interface MainMapper {
      * @param param
      * @return
      */
-    public Map<String, Object> selectRatioChart(Map<String, Object> param);
+    public List<Map<String, Object>> selectRatioChart(Map<String, Object> param);
 
     /**
      * 펀드비율(차트)
      * @param param
      * @return
      */
-    public Map<String, Object> selectFundRatioChart(Map<String, Object> param);
+    public List<Map<String, Object>> selectFundRatioChart(Map<String, Object> param);
 
     /**
      * 종목리스트
@@ -65,41 +65,48 @@ public interface MainMapper {
      * @param param
      * @return
      */
-//    int PROC_FUND_TO_FUND(Map<String, Object> param);
+    int PROC_FUND_TO_FUND(Map<String, Object> param);
 
     /**
      * 거래정보 잔고화
      * @param param
      * @return
      */
-//    int PROC_TRIS_TO_BASE(Map<String, Object> param);
+    int PROC_TRIS_TO_BASE(Map<String, Object> param);
 
     /**
      * 거래없는 잔고화
      * @param param
      * @return
      */
-//    int PROC_BASE_TO_ONE(Map<String, Object> param);
+    int PROC_BASE_TO_ONE(Map<String, Object> param);
 
     /**
      * 잔고를 비율화
      * @param param
      * @return
      */
-//    int PROC_BASE_TO_RATIO(Map<String, Object> param);
+    int PROC_BASE_TO_RATIO(Map<String, Object> param);
 
     /**
      * 펀드잔고 비율화
      * @param param
      * @return
      */
-//    int PROC_FUND_TO_RATIO(Map<String, Object> param);
+    int PROC_FUND_TO_RATIO(Map<String, Object> param);
 
     /**
      * 잔고를 평가
      * @param param
      * @return
      */
-//    int PROC_BASE_TO_ESTM(Map<String, Object> param);
+    int PROC_BASE_TO_ESTM(Map<String, Object> param);
+
+    public Map<String, Object> selectBusiDay(Map<String, Object> param);
+
+    public List<Map<String, Object>> selectPriceList(Map<String, Object> param);
+    public List<Map<String, Object>> selectTrisList(Map<String, Object> param);
+    public List<Map<String, Object>> selectStndItemCList(Map<String, Object> param);
+    public List<Map<String, Object>> selectFundCList(Map<String, Object> param);
 
 }

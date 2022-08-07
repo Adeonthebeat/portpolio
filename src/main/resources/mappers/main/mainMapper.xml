@@ -4,11 +4,16 @@
 <mapper namespace="com.ade.portfolio.main.mapper.MainMapper">
 
     <select id="selectTopInfo" parameterType="hashmap" resultType="hashmap">
-        SELECT  BASE_DATE                                                       AS BASE_DATE
-        ,       TOT_BUY_AMT                                                     AS TOT_EST_AMT
-        ,       TOT_EST_AMT                                                     AS TOT_EST_AMT
-        ,       NVL(FUNC_GET_EXRT(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'USD', 1), 0)   AS EXRT_DATE
-        ,       FUNC_RN(YIELD , 3) * 100                                        AS YIELD
+        SELECT  BASE_DATE                                               AS BASE_DATE
+        ,       TO_CHAR(TOT_BUY_AMT, 'FM999,999,999,999')               AS TOT_BUY_AMT
+        ,       TO_CHAR(TOT_EST_AMT, 'FM999,999,999,999')               AS TOT_EST_AMT
+        ,       (
+                    SELECT 	TRD_EXCH_RATE
+                    FROM 	ADEXRT
+                    WHERE 	BASE_DATE 	= FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD') , 'B')
+                    AND 	CUR_C 		= 'USD'
+                ) 													    AS EXRT_RATE
+        ,       TO_CHAR(FUNC_RN(YIELD , 3) * 100  , 'FM990.99') || '%'  AS YIELD
         FROM    ADESTM
         WHERE   BASE_DATE = (SELECT MAX(EE.BASE_DATE) FROM ADESTM EE)
     </select>
@@ -23,6 +28,7 @@
         ,      	ADITEM  I
         WHERE   B.BASE_DATE    = (SELECT MAX(BB.BASE_DATE) FROM ADBASE BB)
         AND     B.STND_ITEM_C  = I.STND_ITEM_C
+        ORDER BY I.ITEM_SHORT
     </select>
 
     <select id="selectBaseChart" parameterType="hashmap" resultType="hashmap">
@@ -33,9 +39,9 @@
         ,       FUNC_RN((TOT_ESTM_AMT - TOT_AMT) / TOT_ESTM_AMT * 100, 2)   AS YIELD
         FROM
         (
-            SELECT  S.BASE_MONTH                                                                        AS BASE_MONTH
-            ,       FUNC_GET_EXRT(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'USD', S.TOT_AMT) + P.TOT_AMT           AS TOT_AMT
-            ,       FUNC_GET_EXRT(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'USD', S.TOT_ESTM_AMT) + P.TOT_ESTM_AMT AS TOT_ESTM_AMT
+            SELECT  S.BASE_MONTH                                                                                                    AS BASE_MONTH
+            ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD') , 'B'), 'USD', S.TOT_AMT) + P.TOT_AMT              AS TOT_AMT
+            ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD') , 'B'), 'USD', S.TOT_ESTM_AMT) + P.TOT_ESTM_AMT    AS TOT_ESTM_AMT
             FROM
             (
                 SELECT  BASE_MONTH              AS BASE_MONTH
@@ -61,6 +67,7 @@
             )   P
             WHERE    S.BASE_MONTH = P.BASE_MONTH
         )
+        ORDER BY FUNC_CONV_DATE(BASE_MONTH, '-', 'B')
     </select>
 
     <select id="selectRatioChart" parameterType="hashmap" resultType="hashmap">
@@ -106,26 +113,127 @@
             SELECT  F.BASE_DATE                         AS BASE_DATE
             ,       F.STND_ITEM_C                       AS STND_ITEM_C
             ,       I.ITEM_SHORT                        AS ITEM_SHORT
-            ,       F.TOT_BUY_AMT                       AS TOT_BUY_AMT
-            ,       F.TOT_EST_AMT                       AS TOT_EST_AMT
+            ,       F.TOT_BUY_AMT                       AS BUY_AMT
+            ,       F.TOT_EST_AMT                       AS EST_AMT
             ,       FUNC_RN(F.YIELD * 100, 2)           AS YIELD
             FROM    ADITEM    I
             ,       ADFUND    F
             WHERE   I.STND_ITEM_C = F.STND_ITEM_C
             AND     F.BASE_DATE   = (SELECT MAX(FF.BASE_DATE) FROM ADFUND FF)
         )
-        SELECT  *
+        SELECT  FUNC_CONV_DATE(BASE_DATE, '-')          AS BASE_DATE
+        ,       STND_ITEM_C                             AS STND_ITEM_C
+        ,       ITEM_SHORT                              AS ITEM_SHORT
+        ,       TO_CHAR(BUY_AMT, 'FM999,999,999,999')   AS BUY_AMT
+        ,       TO_CHAR(EST_AMT, 'FM999,999,999,999')   AS EST_AMT
+        ,       TO_CHAR(YIELD  , 'FM990.99') || '%'     AS YIELD
         FROM    ITEMLIST
     </select>
 
     <insert id="PROC_TRIS_TO_TRIS" parameterType="hashmap" statementType="CALLABLE">
-        {   CALL  PROC_TRIS_TO_TRIS
+        {   CALL  ADMIN.PROC_TRIS_TO_TRIS
             (
-                #{TR_DATE       , mode=IN, jdbcType=CHAR}   ,
+                #{TR_DATE},
                 #{STND_ITEM_C   , mode=IN, jdbcType=VARCHAR},
                 #{TR_PRICE      , mode=IN, jdbcType=INTEGER},
                 #{TR_QUANTITY   , mode=IN, jdbcType=INTEGER}
             )
         }
     </insert>
+
+    <insert id="PROC_FUND_TO_FUND" parameterType="hashmap" statementType="CALLABLE">
+        {   CALL  ADMIN.PROC_FUND_TO_FUND
+            (
+                #{BASE_DATE     , mode=IN, jdbcType=VARCHAR},
+                #{STND_ITEM_C   , mode=IN, jdbcType=VARCHAR},
+                #{TOT_BUY_AMT   , mode=IN, jdbcType=INTEGER},
+                #{TOT_EST_AMT   , mode=IN, jdbcType=INTEGER}
+            )
+        }
+    </insert>
+
+    <insert id="PROC_TRIS_TO_BASE" parameterType="hashmap" statementType="CALLABLE">
+        {
+            CALL  ADMIN.PROC_TRIS_TO_BASE
+            (#{BASE_DATE},
+            #{STND_ITEM_C   , mode=IN, jdbcType=VARCHAR}
+        )
+        }
+    </insert>
+
+    <insert id="PROC_BASE_TO_ONE" parameterType="hashmap" statementType="CALLABLE">
+        {
+            CALL  PROC_TRIS_TO_BASE(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
+        }
+    </insert>
+
+    <insert id="PROC_BASE_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
+        {
+            CALL  PROC_BASE_TO_RATIO()
+        }
+    </insert>
+
+    <insert id="PROC_FUND_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
+        {
+            CALL  PROC_FUND_TO_RATIO()
+        }
+    </insert>
+
+    <insert id="PROC_BASE_TO_ESTM" parameterType="hashmap" statementType="CALLABLE">
+        {
+        CALL  PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
+        }
+    </insert>
+
+    <select id="selectBusiDay" parameterType="hashmap" resultType="hashmap">
+        SELECT 	FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'B')    AS BASE_DATE
+        FROM 	DUAL
+    </select>
+
+    <select id="selectPriceList" parameterType="hashmap" resultType="hashmap">
+        SELECT 	BASE_DATE       AS BASE_DATE
+        ,       STND_ITEM_C     AS STND_ITEM_C
+        ,       PRICE           AS PRICE
+        ,       CUR_C           AS CUR_C
+        FROM 	ADPRIF
+        WHERE   BASE_DATE = #{BASE_DATE}
+    </select>
+
+    <select id="selectTrisList" parameterType="hashmap" resultType="hashmap">
+        SELECT 	TR_DATE         AS TR_DATE
+        ,       STND_ITEM_C     AS STND_ITEM_C
+        ,       ITEM_NAME       AS ITEM_NAME
+        ,       TR_PRICE        AS TR_PRICE
+        ,       TR_QUANTITY     AS TR_QUANTITY
+        ,       TR_COST         AS TR_COST
+        ,       F_TR_COST       AS F_TR_COST
+        ,       TR_AMT          AS TR_AMT
+        ,       F_TR_AMT        AS F_TR_AMT
+        FROM 	ADTRIS
+        WHERE   TR_DATE     = #{TR_DATE}
+        AND     STND_ITEM_C = #{STND_ITEM_C}
+    </select>
+
+    <select id="selectStndItemCList" parameterType="hashmap" resultType="hashmap">
+        SELECT 	STND_ITEM_C     AS STND_ITEM_C
+        ,       ITEM_SHORT      AS ITEM_SHORT
+        FROM 	ADITEM
+        WHERE   ASTS_GD_TC  IN ('S', 'E')
+    </select>
+
+    <select id="selectFundCList" parameterType="hashmap" resultType="hashmap">
+        SELECT 	STND_ITEM_C     AS STND_ITEM_C
+        ,       ITEM_SHORT      AS ITEM_SHORT
+        FROM 	ADITEM
+        WHERE   ASTS_GD_TC  IN ('P', 'R')
+    </select>
+
+    <select id="selectFundList" parameterType="hashmap" resultType="hashmap">
+        SELECT 	STND_ITEM_C     AS STND_ITEM_C
+        ,       ITEM_SHORT      AS ITEM_SHORT
+        FROM 	ADFUND
+        WHERE   BASE_DATE       = #{BASE_DATE}
+        AND     STND_ITEM_C     = #{STND_ITEM_C}
+    </select>
+
 </mapper>
