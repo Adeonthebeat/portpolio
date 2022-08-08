@@ -103,10 +103,16 @@ public interface MainMapper {
     int PROC_BASE_TO_ESTM(Map<String, Object> param);
 
     public Map<String, Object> selectBusiDay(Map<String, Object> param);
+    public Map<String, Object> selectBeforeBusiDay(Map<String, Object> param);
 
     public List<Map<String, Object>> selectPriceList(Map<String, Object> param);
     public List<Map<String, Object>> selectTrisList(Map<String, Object> param);
     public List<Map<String, Object>> selectStndItemCList(Map<String, Object> param);
     public List<Map<String, Object>> selectFundCList(Map<String, Object> param);
+    public MainVO selectExchRateList(MainVO vo);
+
+    public List<MainVO> selectCurCList();
+
+    int insertADEXRT(MainVO vo);
 
 }

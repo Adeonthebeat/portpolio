@@ -6,12 +6,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.SessionCookieConfig;
 
 @SpringBootApplication
+@EnableScheduling
 @ComponentScan("com.ade.portfolio.*")
 @MapperScan("com.ade.portfolio.*.mapper")
 public class PortpolioApplication extends SpringBootServletInitializer {

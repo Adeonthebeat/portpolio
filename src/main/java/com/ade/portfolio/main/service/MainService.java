@@ -129,6 +129,10 @@ public class MainService {
         return mainMapper.selectBusiDay(param);
     }
 
+    public Map<String, Object> selectBeforeBusiDay(Map<String, Object> param) {
+        return mainMapper.selectBeforeBusiDay(param);
+    }
+
     public List<Map<String, Object>> selectStndItemCList(Map<String, Object> param) {
         return mainMapper.selectStndItemCList(param);
     }
@@ -136,4 +140,8 @@ public class MainService {
     public List<Map<String, Object>> selectFundCList(Map<String, Object> param) {
         return mainMapper.selectFundCList(param);
     }
+    public MainVO selectExchRateList(MainVO vo) {
+        return mainMapper.selectExchRateList(vo);
+    }
+
 }

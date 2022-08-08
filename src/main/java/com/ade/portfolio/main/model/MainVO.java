@@ -11,9 +11,10 @@ import java.math.BigDecimal;
 public class MainVO {
 
     private String baseDate;
-    private BigDecimal totBuyAmt;
-    private BigDecimal totestAmt;
-    private BigDecimal exrtRate;
-    private BigDecimal yield;
+    private String curC;
+    private BigDecimal exchRate;
 
+    public MainVO() {
+        this.exchRate = BigDecimal.ZERO;
+    }
 }
