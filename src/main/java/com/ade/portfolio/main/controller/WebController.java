@@ -51,7 +51,6 @@ public class WebController {
 
         mainService.PROC_TRIS_TO_TRIS(params);
         mainService.PROC_TRIS_TO_BASE(params);
-        mainService.PROC_BASE_TO_RATIO(params);
 
         return new RedirectView("/");
     }
@@ -60,7 +59,6 @@ public class WebController {
     public RedirectView procFundToFund(@RequestBody Map<String, Object> params) {
 
         mainService.PROC_FUND_TO_FUND(params);
-        mainService.PROC_FUND_TO_RATIO(params);
 
         return new RedirectView("/");
     }

@@ -5,6 +5,7 @@ import com.ade.portfolio.main.model.MainVO;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,7 @@ public class MainService {
      */
     public void PROC_TRIS_TO_TRIS(Map<String, Object> param) {
 
+        int result = 0;
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("TR_DATE", MapUtils.getString(this.selectBusiDay(param), "BASE_DATE"));
         resultMap.put("STND_ITEM_C", MapUtils.getString(param, "STND_ITEM_C"));
@@ -70,13 +72,20 @@ public class MainService {
 
         // 거래정보가 없다면.
         if(trisList.size() == 0) {
-            mainMapper.PROC_TRIS_TO_TRIS(resultMap);
+            result = mainMapper.PROC_TRIS_TO_TRIS(resultMap);
+            param.put("BATCH_ID", "TR");
+            if(result > 0){
+                param.put("BATCH_STATUS", "01");
+            } else {
+                param.put("BATCH_STATUS", "02");
+            }
+            this.insertBatchInfo(param);
         }
-
     }
 
     public void PROC_FUND_TO_FUND(Map<String, Object> param) {
 
+        int result = 0;
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("BASE_DATE", MapUtils.getString(this.selectBusiDay(param), "BASE_DATE"));
         resultMap.put("STND_ITEM_C", MapUtils.getString(param, "STND_ITEM_C"));
@@ -85,7 +94,15 @@ public class MainService {
 
         log.info("resultMap : " + resultMap);
 
-        mainMapper.PROC_FUND_TO_FUND(resultMap);
+        result = mainMapper.PROC_FUND_TO_FUND(resultMap);
+
+        param.put("BATCH_ID", "FU");
+        if(result > 0){
+            param.put("BATCH_STATUS", "01");
+        }else {
+            param.put("BATCH_STATUS", "02");
+        }
+        this.insertBatchInfo(param);
     }
 
     /**
@@ -94,6 +111,7 @@ public class MainService {
      */
     public void PROC_TRIS_TO_BASE(Map<String, Object> param) {
 
+        int result = 0;
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("BASE_DATE", MapUtils.getString(this.selectBusiDay(param), "BASE_DATE"));
         resultMap.put("STND_ITEM_C", MapUtils.getString(param, "STND_ITEM_C"));
@@ -104,25 +122,15 @@ public class MainService {
         // 시세정보가 있다면.
         if(getPriceList.size() > 0){
             // 거래정보를 잔고화
-            mainMapper.PROC_TRIS_TO_BASE(resultMap);
+            result = mainMapper.PROC_TRIS_TO_BASE(resultMap);
         }
-
-    }
-
-    public void PROC_BASE_TO_ONE(Map<String, Object> param) {
-        mainMapper.PROC_BASE_TO_ONE(param);
-    }
-
-    public void PROC_BASE_TO_RATIO(Map<String, Object> param) {
-        mainMapper.PROC_BASE_TO_RATIO(param);
-    }
-
-    public void PROC_FUND_TO_RATIO(Map<String, Object> param) {
-        mainMapper.PROC_BASE_TO_RATIO(param);
-    }
-
-    public void PROC_BASE_TO_ESTM(Map<String, Object> param) {
-        mainMapper.PROC_BASE_TO_RATIO(param);
+        param.put("BATCH_ID", "TB");
+        if(result > 0){
+            param.put("BATCH_STATUS", "01");
+        }else {
+            param.put("BATCH_STATUS", "02");
+        }
+        this.insertBatchInfo(param);
     }
 
     public Map<String, Object> selectBusiDay(Map<String, Object> param) {
@@ -142,6 +150,25 @@ public class MainService {
     }
     public MainVO selectExchRateList(MainVO vo) {
         return mainMapper.selectExchRateList(vo);
+    }
+
+    public List<MainVO> selectGetPriceItemList() {
+        return mainMapper.selectGetPriceItemList();
+    }
+
+
+    public void insertBatchInfo(Map<String, Object> param){
+
+        String BATCH_ID = MapUtils.getString(param, "BATCH_ID");
+        String BATCH_STATUS = MapUtils.getString(param, "BATCH_STATUS");
+
+        log.info("BATCH_ID      : " + BATCH_ID);
+        log.info("BATCH_STATUS  : " + BATCH_STATUS);
+
+        if(StringUtils.isNotBlank(BATCH_ID) && StringUtils.isNotBlank(BATCH_STATUS)){
+            mainMapper.insertADBAIF(param);
+        }
+
     }
 
 }

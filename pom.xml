@@ -128,8 +128,6 @@
 			<artifactId>YahooFinanceAPI</artifactId>
 			<version>3.17.0</version>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>

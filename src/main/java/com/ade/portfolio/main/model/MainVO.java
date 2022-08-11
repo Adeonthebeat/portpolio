@@ -14,7 +14,11 @@ public class MainVO {
     private String curC;
     private BigDecimal exchRate;
 
+    private String stndItemC;
+    private BigDecimal price;
+
     public MainVO() {
         this.exchRate = BigDecimal.ZERO;
+        this.price = BigDecimal.ZERO;
     }
 }

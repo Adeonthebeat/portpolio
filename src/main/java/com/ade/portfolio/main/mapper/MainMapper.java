@@ -104,15 +104,25 @@ public interface MainMapper {
 
     public Map<String, Object> selectBusiDay(Map<String, Object> param);
     public Map<String, Object> selectBeforeBusiDay(Map<String, Object> param);
-
     public List<Map<String, Object>> selectPriceList(Map<String, Object> param);
     public List<Map<String, Object>> selectTrisList(Map<String, Object> param);
     public List<Map<String, Object>> selectStndItemCList(Map<String, Object> param);
     public List<Map<String, Object>> selectFundCList(Map<String, Object> param);
     public MainVO selectExchRateList(MainVO vo);
-
+    public MainVO selectADPRIF(MainVO vo);
     public List<MainVO> selectCurCList();
+    public List<MainVO> selectGetPriceItemList();
+    public List<Map<String, Object>> selectADBASECheck(Map<String, Object> param);
+    public List<Map<String, Object>> selectADESTMCheck(Map<String, Object> param);
+    public List<Map<String, Object>> selectCommonCheck(Map<String, Object> param);
+    public List<Map<String, Object>> selectADBSRTCheck(Map<String, Object> param);
+    public List<Map<String, Object>> selectFundCheck(Map<String, Object> param);
+    public Map<String, Object> selectGetBatchId(Map<String, Object> param);
 
     int insertADEXRT(MainVO vo);
+
+    int insertADPRIF(MainVO vo);
+
+    int insertADBAIF(Map<String, Object> param);
 
 }

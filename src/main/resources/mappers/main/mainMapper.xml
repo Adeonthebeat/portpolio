@@ -7,12 +7,12 @@
         SELECT  BASE_DATE                                               AS BASE_DATE
         ,       TO_CHAR(TOT_BUY_AMT, 'FM999,999,999,999')               AS TOT_BUY_AMT
         ,       TO_CHAR(TOT_EST_AMT, 'FM999,999,999,999')               AS TOT_EST_AMT
-        ,       (
+        ,       NVL((
                     SELECT 	TRD_EXCH_RATE
                     FROM 	ADEXRT
-                    WHERE 	BASE_DATE 	= FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD') , 'B')
+                    WHERE 	BASE_DATE 	= FUNC_GET_MAX('ADEXRT')
                     AND 	CUR_C 		= 'USD'
-                ) 													    AS EXRT_RATE
+                ), 0) 													    AS EXRT_RATE
         ,       TO_CHAR(FUNC_RN(YIELD , 3) * 100  , 'FM990.99') || '%'  AS YIELD
         FROM    ADESTM
         WHERE   BASE_DATE = (SELECT MAX(EE.BASE_DATE) FROM ADESTM EE)
@@ -40,8 +40,8 @@
         FROM
         (
             SELECT  S.BASE_MONTH                                                                                                    AS BASE_MONTH
-            ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD') , 'B'), 'USD', S.TOT_AMT) + P.TOT_AMT              AS TOT_AMT
-            ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD') , 'B'), 'USD', S.TOT_ESTM_AMT) + P.TOT_ESTM_AMT    AS TOT_ESTM_AMT
+            ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(FUNC_GET_MAX('ADBASE'), 'B'), 'USD', S.TOT_AMT) + P.TOT_AMT              AS TOT_AMT
+            ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(FUNC_GET_MAX('ADBASE'), 'B'), 'USD', S.TOT_ESTM_AMT) + P.TOT_ESTM_AMT    AS TOT_ESTM_AMT
             FROM
             (
                 SELECT  BASE_MONTH              AS BASE_MONTH
@@ -154,34 +154,31 @@
 
     <insert id="PROC_TRIS_TO_BASE" parameterType="hashmap" statementType="CALLABLE">
         {
-            CALL  ADMIN.PROC_TRIS_TO_BASE
-            (#{BASE_DATE},
-            #{STND_ITEM_C   , mode=IN, jdbcType=VARCHAR}
-        )
+            CALL  ADMIN.PROC_TRIS_TO_BASE(#{BASE_DATE},#{STND_ITEM_C, mode=IN, jdbcType=VARCHAR})
         }
     </insert>
 
     <insert id="PROC_BASE_TO_ONE" parameterType="hashmap" statementType="CALLABLE">
         {
-            CALL  PROC_TRIS_TO_BASE(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
+            CALL  ADMIN.PROC_BASE_TO_ONE(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
         }
     </insert>
 
     <insert id="PROC_BASE_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
         {
-            CALL  PROC_BASE_TO_RATIO()
+            CALL  ADMIN.PROC_BASE_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
         }
     </insert>
 
     <insert id="PROC_FUND_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
         {
-            CALL  PROC_FUND_TO_RATIO()
+            CALL  ADMIN.PROC_FUND_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
         }
     </insert>
 
     <insert id="PROC_BASE_TO_ESTM" parameterType="hashmap" statementType="CALLABLE">
         {
-        CALL  PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
+        CALL  ADMIN.PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
         }
     </insert>
 
@@ -191,7 +188,7 @@
     </select>
 
     <select id="selectBeforeBusiDay" parameterType="hashmap" resultType="hashmap">
-        SELECT 	FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'BBß')    AS BASE_DATE
+        SELECT 	FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'BB')    AS BASE_DATE
         FROM 	DUAL
     </select>
 
@@ -250,20 +247,116 @@
         AND     CUR_C           = #{curC}
     </select>
 
+    <select id="selectCurCList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+        SELECT 	TRIM(CODE)  AS curC
+        FROM 	ADCDGR
+        WHERE   CODE_ID     = 'CUR_C'
+    </select>
+
+    <select id="selectGetPriceItemList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+        SELECT 	STND_ITEM_C  AS stndItemC
+        FROM 	ADITEM
+        WHERE   ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'STCK')
+    </select>
+
+    <select id="selectADPRIF" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+        SELECT 	STND_ITEM_C  AS stndItemC
+        FROM 	ADPRIF
+        WHERE   BASE_DATE   = #{baseDate}
+        AND     STND_ITEM_C = #{stndItemC}
+    </select>
+
     <insert id="insertADEXRT" parameterType="com.ade.portfolio.main.model.MainVO">
         INSERT INTO ADEXRT
-        SELECT  #{baseDate}         AS BASE_DATE
-        ,       #{curC}             AS CUR_C
-        ,       #{exchRate}         AS TRD_EXCH_RATE
-        ,       'ADE'               AS LST_CHNG_NAME
-        ,       TO_DATE(SYSDATE)    AS LST_CHNG_TIME
-        FROM    DUAL
+        (       BASE_DATE
+        ,       CUR_C
+        ,       TRD_EXCH_RATE
+        ,       LST_CHNG_NAME
+        ,       LST_CHNG_TIME
+        ) VALUES
+        (       #{baseDate}
+        ,       #{curC}
+        ,       #{exchRate}
+        ,       'ADE'
+        ,       TO_DATE(CURRENT_DATE)
+        )
     </insert>
 
-    <select id="selectCurCList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
-        SELECT 	TRIM(CODE)     AS curC
-        FROM 	ADCDDE
-        WHERE   CODE_ID     = 'CUR_C'
-        AND     CODE        != 'KRW'
+    <insert id="insertADPRIF" parameterType="com.ade.portfolio.main.model.MainVO">
+        INSERT INTO ADPRIF
+        (       BASE_DATE
+        ,       STND_ITEM_C
+        ,       PRICE
+        ,       CUR_C
+        ,       LST_CHNG_NAME
+        ,       LST_CHNG_TIME
+        ) VALUES
+        (       #{baseDate}
+        ,       #{stndItemC}
+        ,       #{price}
+        ,       #{curC}
+        ,       'ADE'
+        ,       CURRENT_DATE
+        )
+    </insert>
+
+    <select id="selectADBASECheck" parameterType="hashmap" resultType="hashmap">
+        SELECT  STND_ITEM_C AS STND_ITEM_C
+        FROM    ADBASE
+        WHERE   BASE_DATE   = #{BASE_DATE}
+        <if test='STND_ITEM_C != null'>
+            AND     STND_ITEM_C = #{STND_ITEM_C}
+        </if>
     </select>
+
+    <select id="selectFundCheck" parameterType="hashmap" resultType="hashmap">
+        SELECT  STND_ITEM_C AS STND_ITEM_C
+        FROM    ADFUND
+        WHERE   BASE_DATE  = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE &lt;= #{BASE_DATE})
+    </select>
+
+    <select id="selectADESTMCheck" parameterType="hashmap" resultType="hashmap">
+        SELECT  BASE_DATE   AS BASE_DATE
+        FROM    ADESTM
+        WHERE   BASE_DATE   = #{BASE_DATE}
+    </select>
+
+    <select id="selectADBSRTCheck" parameterType="hashmap" resultType="hashmap">
+        SELECT  STND_ITEM_C   AS STND_ITEM_C
+        FROM    ADBSRT
+        WHERE   BASE_MONTH = SUBSTR(#{BASE_DATE}, 0, 6)
+    </select>
+
+    <select id="selectCommonCheck" parameterType="hashmap" resultType="hashmap" >
+        SELECT 	I.STND_ITEM_C   AS STND_ITEM_C
+        FROM 	ADITEM 	I
+        ,		ADPRIF 	P
+        ,		ADEXRT 	E
+        WHERE 	P.STND_ITEM_C = I.STND_ITEM_C
+        AND 	P.BASE_DATE   = #{BASE_DATE}
+        AND 	P.BASE_DATE   = E.BASE_DATE
+        AND 	I.CUR_C 	  = E.CUR_C
+        AND 	I.ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'STCK')
+    </select>
+
+    <select id="selectGetBatchId" parameterType="hashmap" resultType="hashmap" >
+        SELECT 	FUNC_GET_RMKS('BATCH_ID', #{BATCH_ID}) AS CODE
+        FROM 	DUAL
+    </select>
+
+    <insert id="insertADBAIF" parameterType="hashmap">
+        INSERT INTO ADBAIF
+        (       BATCH_ID
+        ,       BATCH_PROC_TIME
+        ,       BATCH_STATUS
+        ,       LST_CHNG_NAME
+        ,       LST_CHNG_TIME
+        ) VALUES
+        (       (SELECT FUNC_GET_RMKS('BATCH_ID', #{BATCH_ID}) FROM DUAL)
+        ,       CURRENT_DATE
+        ,       FUNC_FIND_CDNM('BATCH_STATUS', #{BATCH_STATUS})
+        ,       'ADE'
+        ,       CURRENT_DATE
+        )
+    </insert>
 </mapper>
