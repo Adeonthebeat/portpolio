@@ -149,7 +149,12 @@
 			<artifactId>spring-boot-maven-plugin</artifactId>
 			<version>2.7.2</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.jvnet.staxex/stax-ex -->
+		<dependency>
+			<groupId>org.jvnet.staxex</groupId>
+			<artifactId>stax-ex</artifactId>
+			<version>2.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
