@@ -97,11 +97,7 @@ public class MainService {
         result = mainMapper.PROC_FUND_TO_FUND(resultMap);
 
         param.put("BATCH_ID", "FU");
-        if(result > 0){
-            param.put("BATCH_STATUS", "01");
-        }else {
-            param.put("BATCH_STATUS", "02");
-        }
+        param.put("BATCH_STATUS", "01");
         this.insertBatchInfo(param);
     }
 
@@ -125,11 +121,7 @@ public class MainService {
             result = mainMapper.PROC_TRIS_TO_BASE(resultMap);
         }
         param.put("BATCH_ID", "TB");
-        if(result > 0){
-            param.put("BATCH_STATUS", "01");
-        }else {
-            param.put("BATCH_STATUS", "02");
-        }
+        param.put("BATCH_STATUS", "01");
         this.insertBatchInfo(param);
     }
 

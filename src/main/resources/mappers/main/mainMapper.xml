@@ -13,7 +13,7 @@
                     WHERE 	BASE_DATE 	= FUNC_GET_MAX('ADEXRT')
                     AND 	CUR_C 		= 'USD'
                 ), 0) 													    AS EXRT_RATE
-        ,       TO_CHAR(FUNC_RN(YIELD , 3) * 100  , 'FM990.99') || '%'  AS YIELD
+        ,       TO_CHAR(FUNC_RN(YIELD , 3) * 100  , 'FM990.90') || '%'  AS YIELD
         FROM    ADESTM
         WHERE   BASE_DATE = (SELECT MAX(EE.BASE_DATE) FROM ADESTM EE)
     </select>
