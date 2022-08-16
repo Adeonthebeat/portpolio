@@ -224,6 +224,8 @@
                                     <input type="number" class="form-control" id="input_trQty" step="0.00001">
                                 </div>
                                 <button type="submit" class="btn btn-primary" onclick="updateTransaction()">입력</button>
+                                <button type="button" class="btn btn-success rounded-pill m-2" style="float:right" onclick="updatePrice()">시세</button>
+                                <button type="button" class="btn btn-success rounded-pill m-2" style="float:right" onclick="updateBase()">잔고 및 평가</button>
                             </form>
                         </div>
                     </div>
@@ -504,7 +506,41 @@
             }
             return str;
         };
+        <!-- 시세  -->
+        function updatePrice() {
+            var params = {
 
+            };
+
+            $.ajax({
+                url : "/getPrice",
+                type: "POST",
+                data: JSON.stringify(params),
+                dataType : "json",
+                contentType:"application/json",
+            })
+            .done(function (fragment) {
+            });
+
+        };
+
+       <!-- 시세  -->
+        function updateBase() {
+            var params = {
+
+            };
+
+            $.ajax({
+                url : "/getBase",
+                type: "POST",
+                data: JSON.stringify(params),
+                dataType : "json",
+                contentType:"application/json",
+            })
+            .done(function (fragment) {
+            });
+
+        };
     </script>
 </body>
 

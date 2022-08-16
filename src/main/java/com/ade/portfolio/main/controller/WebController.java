@@ -2,6 +2,7 @@ package com.ade.portfolio.main.controller;
 
 import com.ade.portfolio.main.model.MainVO;
 import com.ade.portfolio.main.service.MainService;
+import com.ade.portfolio.main.service.ScheduleService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class WebController {
 
     @Autowired
     private MainService mainService;
+    private ScheduleService scheduleService;
 
     @GetMapping("/")
     public ModelAndView home() {
@@ -59,6 +61,24 @@ public class WebController {
     public RedirectView procFundToFund(@RequestBody Map<String, Object> params) {
 
         mainService.PROC_FUND_TO_FUND(params);
+
+        return new RedirectView("/");
+    }
+
+    @PostMapping("/getPrice")
+    public RedirectView getPrice(@RequestBody Map<String, Object> params) throws Exception{
+
+        mainService.getPrice();
+        mainService.getExchRate();
+
+        return new RedirectView("/");
+    }
+
+    @PostMapping("/getBase")
+    public RedirectView getBase(@RequestBody Map<String, Object> params) throws Exception{
+
+        mainService.PROC_BASE_TO_ONE();
+        mainService.PROC_BASE_TO_ESTM();
 
         return new RedirectView("/");
     }

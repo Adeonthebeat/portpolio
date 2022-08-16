@@ -8,7 +8,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import yahoofinance.YahooFinance;
+import yahoofinance.quotes.fx.FxQuote;
 
 import java.util.List;
 import java.util.Map;
@@ -161,6 +164,138 @@ public class MainService {
             mainMapper.insertADBAIF(param);
         }
 
+    }
+
+    public void getPrice() throws Exception{
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        List<MainVO> itemList = this.selectGetPriceItemList();
+        String baseDate = MapUtils.getString(this.selectBusiDay(param), "BASE_DATE");
+
+        for(MainVO vo : itemList){
+            vo.setBaseDate(baseDate);
+            vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
+            vo.setCurC(YahooFinance.get(vo.getStndItemC()).getCurrency());
+
+            log.info("------------------------------------------");
+            log.info("# 기준일자 : " + vo.getBaseDate());
+            log.info("# 종목코드 : " + vo.getStndItemC());
+            log.info("# 기준가격 : " + vo.getPrice());
+            log.info("# 통화코드 : " + vo.getCurC());
+            log.info("------------------------------------------");
+
+            MainVO list = mainMapper.selectADPRIF(vo);
+            if(list == null){
+                log.info("# insertADPRIF ");
+                result = mainMapper.insertADPRIF(vo);
+
+                param.put("BATCH_ID", "PR");
+                param.put("BATCH_STATUS", "01");
+                this.insertBatchInfo(param);
+            }
+        }
+    }
+
+    public void getExchRate() throws Exception {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+        FxQuote usdkrw = YahooFinance.getFx("USDKRW=X");
+        FxQuote eurkrw = YahooFinance.getFx("EURKRW=X");
+
+        MainVO vo = new MainVO();
+
+        // 통화리스트
+        List<MainVO> curCList = mainMapper.selectCurCList();
+
+        // 기준일자
+        String baseDate = MapUtils.getString(this.selectBusiDay(param), "BASE_DATE");
+
+        for(int i = 0; i < curCList.size(); i++){
+
+            // 환율
+            if(StringUtils.equals(curCList.get(i).getCurC(), "USD")){
+                vo.setBaseDate(baseDate);
+                vo.setCurC(curCList.get(i).getCurC());  // 통화코드
+                vo.setExchRate(usdkrw.getPrice());
+            } else if(StringUtils.equals(curCList.get(i).getCurC(), "EUR")){
+                vo.setBaseDate(baseDate);
+                vo.setCurC(curCList.get(i).getCurC());  // 통화코드
+                vo.setExchRate(eurkrw.getPrice());
+            }
+            MainVO list = this.selectExchRateList(vo);
+
+            log.info("# 기준일자 : " + vo.getBaseDate());
+            log.info("# 통화코드 : " + vo.getCurC());
+            log.info("# 횐율    : " + vo.getExchRate());
+
+            if(list == null){
+                log.info("# insertADEXRT ");
+                result = mainMapper.insertADEXRT(vo);
+
+                param.put("BATCH_ID", "EX");
+                param.put("BATCH_STATUS", "01");
+                this.insertBatchInfo(param);
+            }
+        }
+
+    }
+
+    public void PROC_BASE_TO_ONE() {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        List<MainVO> itemList = this.selectGetPriceItemList();
+
+        String BASE_DATE = MapUtils.getString(mainMapper.selectBusiDay(param), "BASE_DATE");
+
+        for(int i = 0; i < itemList.size(); i++){
+
+            // SETTING
+            param.put("BASE_DATE", BASE_DATE);
+            param.put("STND_ITEM_C", itemList.get(i).getStndItemC());
+
+            log.info("# param : {} ", param);
+
+            // CHECK
+            List<Map<String, Object>> adbaseCheck = mainMapper.selectADBASECheck(param);
+            List<Map<String, Object>> commonCheck = mainMapper.selectCommonCheck(param);
+
+            if(adbaseCheck.size() == 0 && commonCheck.size() == itemList.size()){
+
+                // INSERT
+                log.info("# PROC_BASE_TO_ONE ");
+                result = mainMapper.PROC_BASE_TO_ONE(param);
+
+                param.put("BATCH_ID", "BO");
+                param.put("BATCH_STATUS", "01");
+                this.insertBatchInfo(param);
+            }
+        }
+    }
+
+    public void PROC_BASE_TO_ESTM() {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        param.put("BASE_DATE", MapUtils.getString(this.selectBusiDay(param), "BASE_DATE"));
+
+        // CHECK
+        List<Map<String, Object>> adbaseCheck = mainMapper.selectADBASECheck(param);
+        List<Map<String, Object>> adestmCheck = mainMapper.selectADESTMCheck(param);
+
+        if(adbaseCheck.size() > 0 && adestmCheck.size() == 0){
+            // INSERT
+            log.info("# PROC_BASE_TO_ESTM ");
+            result = mainMapper.PROC_BASE_TO_ESTM(param);
+
+            param.put("BATCH_ID", "BE");
+            param.put("BATCH_STATUS", "01");
+            this.insertBatchInfo(param);
+        }
     }
 
 }
