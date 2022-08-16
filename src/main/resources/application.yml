@@ -38,4 +38,4 @@ mybatis:
 
 logging:
   level:
-    com.xxx: debug
+    root: info
