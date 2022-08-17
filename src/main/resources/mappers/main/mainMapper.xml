@@ -12,7 +12,7 @@
                     FROM 	ADEXRT
                     WHERE 	BASE_DATE 	= FUNC_GET_MAX('ADEXRT')
                     AND 	CUR_C 		= 'USD'
-                ), 0) 													    AS EXRT_RATE
+                ), 0) 													AS EXRT_RATE
         ,       TO_CHAR(FUNC_RN(YIELD , 3) * 100  , 'FM990.90') || '%'  AS YIELD
         FROM    ADESTM
         WHERE   BASE_DATE = (SELECT MAX(EE.BASE_DATE) FROM ADESTM EE)
@@ -47,8 +47,8 @@
                 SELECT  BASE_MONTH              AS BASE_MONTH
                 ,       SUM(B.TOT_AMT)          AS TOT_AMT
                 ,       SUM(B.TOT_ESTM_AMT)     AS TOT_ESTM_AMT
-                FROM    ADBSRT   B
-                ,       ADITEM    I
+                FROM    ADBSRT  B
+                ,       ADITEM  I
                 WHERE   B.STND_ITEM_C = I.STND_ITEM_C
                 AND     I.ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'STCK')
                 GROUP BY BASE_MONTH
@@ -178,7 +178,7 @@
 
     <insert id="PROC_BASE_TO_ESTM" parameterType="hashmap" statementType="CALLABLE">
         {
-        CALL  ADMIN.PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
+            CALL  ADMIN.PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
         }
     </insert>
 
@@ -278,7 +278,7 @@
         ,       #{curC}
         ,       #{exchRate}
         ,       'ADE'
-        ,       TO_DATE(CURRENT_DATE)
+        ,       CURRENT_DATE
         )
     </insert>
 
