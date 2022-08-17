@@ -171,7 +171,7 @@ public class MainService {
         Map<String, Object> param = Maps.newHashMap();
 
         List<MainVO> itemList = this.selectGetPriceItemList();
-        String baseDate = MapUtils.getString(this.selectBusiDay(param), "BASE_DATE");
+        String baseDate = MapUtils.getString(this.selectBeforeBusiDay(param), "BASE_DATE");
 
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
