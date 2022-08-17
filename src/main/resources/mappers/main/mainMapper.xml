@@ -329,9 +329,9 @@
 
     <select id="selectCommonCheck" parameterType="hashmap" resultType="hashmap" >
         SELECT 	I.STND_ITEM_C   AS STND_ITEM_C
-        FROM 	ADITEM 	I
-        ,		ADPRIF 	P
-        ,		ADEXRT 	E
+        FROM    ADITEM 	I
+        ,       ADPRIF 	P
+        ,       ADEXRT 	E
         WHERE 	P.STND_ITEM_C = I.STND_ITEM_C
         AND 	P.BASE_DATE   = #{BASE_DATE}
         AND 	P.BASE_DATE   = E.BASE_DATE
