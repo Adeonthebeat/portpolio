@@ -249,7 +249,7 @@ public class MainService {
 
         List<MainVO> itemList = this.selectGetPriceItemList();
 
-        String BASE_DATE = MapUtils.getString(mainMapper.selectBusiDay(param), "BASE_DATE");
+        String BASE_DATE = MapUtils.getString(mainMapper.selectBeforeBusiDay(param), "BASE_DATE");
 
         for(int i = 0; i < itemList.size(); i++){
 
@@ -281,7 +281,7 @@ public class MainService {
         int result = 0;
         Map<String, Object> param = Maps.newHashMap();
 
-        param.put("BASE_DATE", MapUtils.getString(this.selectBusiDay(param), "BASE_DATE"));
+        param.put("BASE_DATE", MapUtils.getString(this.selectBeforeBusiDay(param), "BASE_DATE"));
 
         // CHECK
         List<Map<String, Object>> adbaseCheck = mainMapper.selectADBASECheck(param);
