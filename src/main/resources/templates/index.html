@@ -439,21 +439,27 @@
         var fundRatio1 = Number(ratioChart[1].ESTM_RATIO);
         var fundRatio2 = Number(ratioChart[2].ESTM_RATIO);
         var fundRatio3 = Number(ratioChart[3].ESTM_RATIO);
+        var fundRatio4 = Number(ratioChart[4].ESTM_RATIO);
+        var fundRatio5 = Number(ratioChart[5].ESTM_RATIO);
+        var fundRatio6 = Number(ratioChart[6].ESTM_RATIO);
 
         // Doughnut Chart
         var ctx6 = $("#fund-chart").get(0).getContext("2d");
         var myChart6 = new Chart(ctx6, {
             type: "doughnut",
             data: {
-                labels: [fundRatioChart[0].ITEM_SHORT, fundRatioChart[1].ITEM_SHORT, fundRatioChart[2].ITEM_SHORT, fundRatioChart[3].ITEM_SHORT],
+                labels: [fundRatioChart[0].ITEM_SHORT, fundRatioChart[1].ITEM_SHORT, fundRatioChart[2].ITEM_SHORT, fundRatioChart[3].ITEM_SHORT, fundRatioChart[4].ITEM_SHORT,fundRatioChart[5].ITEM_SHORT,fundRatioChart[6].ITEM_SHORT],
                 datasets: [{
                     backgroundColor: [
                         "rgba(0, 156, 255, .7)",
                         "rgba(0, 156, 255, .6)",
                         "rgba(0, 156, 255, .5)",
-                        "rgba(0, 156, 255, .4)"
+                        "rgba(0, 156, 255, .4)",
+                        "rgba(0, 156, 255, .3)",
+                        "rgba(0, 156, 255, .2)",
+                        "rgba(0, 156, 255, .1)"
                     ],
-                    data: [fundRatio, fundRatio1, fundRatio2, fundRatio3]
+                    data: [fundRatio, fundRatio1, fundRatio2, fundRatio3, fundRatio4, fundRatio5, fundRatio6]
                 }]
             },
             options: {
