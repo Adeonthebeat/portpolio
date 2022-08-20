@@ -119,12 +119,12 @@
             WHERE   I.STND_ITEM_C = F.STND_ITEM_C
             AND     F.BASE_DATE   = (SELECT MAX(FF.BASE_DATE) FROM ADFUND FF)
         )
-        SELECT  FUNC_CONV_DATE(BASE_DATE, '-')                              AS BASE_DATE
-        ,       STND_ITEM_C                                                 AS STND_ITEM_C
-        ,       ITEM_SHORT                                                  AS ITEM_SHORT
-        ,       TO_CHAR(BUY_AMT, 'FM999,999,999,999')                       AS BUY_AMT
-        ,       TO_CHAR(EST_AMT, 'FM999,999,999,999')                       AS EST_AMT
-        ,       TO_CHAR((EST_AMT - BUY_AMT) / BUY_AMT, 'FM990.90') || '%'   AS YIELD
+        SELECT  FUNC_CONV_DATE(BASE_DATE, '-')          AS BASE_DATE
+        ,       STND_ITEM_C                             AS STND_ITEM_C
+        ,       ITEM_SHORT                              AS ITEM_SHORT
+        ,       TO_CHAR(BUY_AMT, 'FM999,999,999,999')   AS BUY_AMT
+        ,       TO_CHAR(EST_AMT, 'FM999,999,999,999')   AS EST_AMT
+        ,       TO_CHAR(((EST_AMT - BUY_AMT) / BUY_AMT) * 100, 'FM990.90') || '%'   AS YIELD
         FROM    ITEMLIST
     </select>
 
