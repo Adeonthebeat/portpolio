@@ -126,7 +126,7 @@
         ,       ITEM_SHORT                              AS ITEM_SHORT
         ,       TO_CHAR(BUY_AMT, 'FM999,999,999,999')   AS BUY_AMT
         ,       TO_CHAR(EST_AMT, 'FM999,999,999,999')   AS EST_AMT
-        ,       TO_CHAR(YIELD  , 'FM990.99') || '%'     AS YIELD
+        ,       TO_CHAR(YIELD  , 'FM990.90') || '%'     AS YIELD
         FROM    ITEMLIST
     </select>
 
