@@ -104,7 +104,6 @@
             ,       I.ITEM_SHORT                                                        AS ITEM_SHORT
             ,       FUNC_GET_EXRT(B.BASE_DATE, 'USD', FUNC_RN(B.BUY_AMT * QUANTITY, 2)) AS BUY_AMT
             ,       FUNC_GET_EXRT(B.BASE_DATE, 'USD', FUNC_RN(B.EST_AMT * QUANTITY, 2)) AS EST_AMT
-            ,       FUNC_RN(B.YIELD * 100, 2)           AS YIELD
             FROM    ADITEM    I
             ,       ADBASE    B
             WHERE   I.STND_ITEM_C = B.STND_ITEM_C
@@ -115,18 +114,17 @@
             ,       I.ITEM_SHORT                        AS ITEM_SHORT
             ,       F.TOT_BUY_AMT                       AS BUY_AMT
             ,       F.TOT_EST_AMT                       AS EST_AMT
-            ,       FUNC_RN(F.YIELD * 100, 2)           AS YIELD
             FROM    ADITEM    I
             ,       ADFUND    F
             WHERE   I.STND_ITEM_C = F.STND_ITEM_C
             AND     F.BASE_DATE   = (SELECT MAX(FF.BASE_DATE) FROM ADFUND FF)
         )
-        SELECT  FUNC_CONV_DATE(BASE_DATE, '-')          AS BASE_DATE
-        ,       STND_ITEM_C                             AS STND_ITEM_C
-        ,       ITEM_SHORT                              AS ITEM_SHORT
-        ,       TO_CHAR(BUY_AMT, 'FM999,999,999,999')   AS BUY_AMT
-        ,       TO_CHAR(EST_AMT, 'FM999,999,999,999')   AS EST_AMT
-        ,       TO_CHAR(YIELD  , 'FM990.90') || '%'     AS YIELD
+        SELECT  FUNC_CONV_DATE(BASE_DATE, '-')                              AS BASE_DATE
+        ,       STND_ITEM_C                                                 AS STND_ITEM_C
+        ,       ITEM_SHORT                                                  AS ITEM_SHORT
+        ,       TO_CHAR(BUY_AMT, 'FM999,999,999,999')                       AS BUY_AMT
+        ,       TO_CHAR(EST_AMT, 'FM999,999,999,999')                       AS EST_AMT
+        ,       TO_CHAR((EST_AMT - BUY_AMT) / BUY_AMT, 'FM990.90') || '%'   AS YIELD
         FROM    ITEMLIST
     </select>
 
