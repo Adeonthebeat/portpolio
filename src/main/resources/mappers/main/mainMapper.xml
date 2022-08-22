@@ -51,6 +51,7 @@
                 ,       ADITEM  I
                 WHERE   B.STND_ITEM_C = I.STND_ITEM_C
                 AND     I.ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'STCK')
+                AND 	BASE_MONTH    &gt TO_CHAR(ADD_MONTHS(SYSDATE, -3), 'YYYYMM')
                 GROUP BY BASE_MONTH
                 ORDER BY BASE_MONTH
             )   S,
@@ -62,6 +63,7 @@
                 ,       ADITEM  I
                 WHERE   B.STND_ITEM_C = I.STND_ITEM_C
                 AND     I.ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'FUND')
+                AND 	BASE_MONTH    &gt TO_CHAR(ADD_MONTHS(SYSDATE, -3), 'YYYYMM')
                 GROUP BY BASE_MONTH
                 ORDER BY BASE_MONTH
             )   P
