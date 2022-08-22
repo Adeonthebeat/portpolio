@@ -52,18 +52,20 @@ public class ScheduleService {
             // 환율
             if(StringUtils.equals(curCList.get(i).getCurC(), "USD")){
                 vo.setBaseDate(baseDate);
-                vo.setCurC(curCList.get(i).getCurC());  // 통화코드
+                vo.setCurC(curCList.get(i).getCurC());
                 vo.setExchRate(usdkrw.getPrice());
             } else if(StringUtils.equals(curCList.get(i).getCurC(), "EUR")){
                 vo.setBaseDate(baseDate);
-                vo.setCurC(curCList.get(i).getCurC());  // 통화코드
+                vo.setCurC(curCList.get(i).getCurC());
                 vo.setExchRate(eurkrw.getPrice());
             }
             MainVO list = mainService.selectExchRateList(vo);
 
+            log.info("========================================");
             log.info("# 기준일자 : " + vo.getBaseDate());
             log.info("# 통화코드 : " + vo.getCurC());
             log.info("# 횐율    : " + vo.getExchRate());
+            log.info("========================================");
 
             if(list == null){
                 log.info("# insertADEXRT ");
@@ -219,6 +221,27 @@ public class ScheduleService {
             param.put("BATCH_STATUS", "01");
             mainService.insertBatchInfo(param);
         }
+    }
+
+    @Scheduled(cron = "* 10 10 * * MON-FRI")
+    public void PROC_DELETE_ALL() {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+
+        param.put("BASE_DATE", BASE_DATE);
+
+        log.info("param : {} ", param);
+
+        // INSERT
+        log.info("# PROC_DELETE_ALL ");
+        result = mainMapper.PROC_DELETE_ALL(param);
+
+        param.put("BATCH_ID", "DA");
+        param.put("BATCH_STATUS", "01");
+        mainService.insertBatchInfo(param);
     }
 
 }

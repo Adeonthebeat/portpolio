@@ -166,13 +166,16 @@ public class MainService {
 
     }
 
+    /**
+     * 시세정보를 등록한다.
+     * @throws Exception
+     */
     public void getPrice() throws Exception{
         int result = 0;
         Map<String, Object> param = Maps.newHashMap();
 
         List<MainVO> itemList = this.selectGetPriceItemList();
         String baseDate = MapUtils.getString(this.selectBeforeBusiDay(param), "BASE_DATE");
-
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
             vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
@@ -192,11 +195,17 @@ public class MainService {
 
                 param.put("BATCH_ID", "PR");
                 param.put("BATCH_STATUS", "01");
+
                 this.insertBatchInfo(param);
             }
         }
+
     }
 
+    /**
+     * 환율정보를 등록한다.
+     * @throws Exception
+     */
     public void getExchRate() throws Exception {
 
         int result = 0;
@@ -242,6 +251,9 @@ public class MainService {
 
     }
 
+    /**
+     * 잔고정보를 생성한다.
+     */
     public void PROC_BASE_TO_ONE() {
 
         int result = 0;
@@ -276,6 +288,9 @@ public class MainService {
         }
     }
 
+    /**
+     * 평가정보를 생성한다.
+     */
     public void PROC_BASE_TO_ESTM() {
 
         int result = 0;
@@ -296,6 +311,14 @@ public class MainService {
             param.put("BATCH_STATUS", "01");
             this.insertBatchInfo(param);
         }
+    }
+
+    /**
+     * 테이블 내역을 삭제한다.
+     * @param param
+     */
+    public void PROC_DELETE_ALL(Map<String, Object> param) {
+        mainMapper.PROC_DELETE_ALL(param);
     }
 
 }

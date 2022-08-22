@@ -39,7 +39,7 @@
         ,       FUNC_RN((TOT_ESTM_AMT - TOT_AMT) / TOT_ESTM_AMT * 100, 2)   AS YIELD
         FROM
         (
-            SELECT  S.BASE_MONTH                                                                                                    AS BASE_MONTH
+            SELECT  S.BASE_MONTH                                                                                             AS BASE_MONTH
             ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(FUNC_GET_MAX('ADBASE'), 'B'), 'USD', S.TOT_AMT) + P.TOT_AMT              AS TOT_AMT
             ,       FUNC_GET_EXRT(FUNC_GET_BUSI_DAY(FUNC_GET_MAX('ADBASE'), 'B'), 'USD', S.TOT_ESTM_AMT) + P.TOT_ESTM_AMT    AS TOT_ESTM_AMT
             FROM
@@ -359,4 +359,11 @@
         ,       CURRENT_DATE
         )
     </insert>
+
+    <insert id="PROC_DELETE_ALL" parameterType="hashmap" statementType="CALLABLE">
+        {
+        CALL  ADMIN.PROC_DELETE_ALL(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
+        }
+    </insert>
+
 </mapper>

@@ -102,27 +102,142 @@ public interface MainMapper {
      */
     int PROC_BASE_TO_ESTM(Map<String, Object> param);
 
+    /**
+     * 영업일자 전일자 날짜 조회
+     * @param param
+     * @return
+     */
     public Map<String, Object> selectBusiDay(Map<String, Object> param);
+
+    /**
+     * 영업일자 전전일자 조회
+     * @param param
+     * @return
+     */
     public Map<String, Object> selectBeforeBusiDay(Map<String, Object> param);
+
+    /**
+     * 시세정보 조회
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectPriceList(Map<String, Object> param);
+
+    /**
+     * 거래정보 조회
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectTrisList(Map<String, Object> param);
+
+    /**
+     * 종목정보 조회
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectStndItemCList(Map<String, Object> param);
+
+    /**
+     * 펀드정보 조회
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectFundCList(Map<String, Object> param);
+
+    /**
+     * 환율정보 조회
+     * @param vo
+     * @return
+     */
     public MainVO selectExchRateList(MainVO vo);
+
+    /**
+     * 시세정보 체크
+     * @param vo
+     * @return
+     */
     public MainVO selectADPRIF(MainVO vo);
+
+    /**
+     * 환율코드 조회
+     * @return
+     */
     public List<MainVO> selectCurCList();
+
+    /**
+     * 시세정보 종목 조회
+     * @return
+     */
     public List<MainVO> selectGetPriceItemList();
+
+    /**
+     * 잔고정보 조회
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectADBASECheck(Map<String, Object> param);
+
+    /**
+     * 평가정보 조회
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectADESTMCheck(Map<String, Object> param);
+
+    /**
+     * 공통정보 체크
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectCommonCheck(Map<String, Object> param);
+
+    /**
+     * 비율정보 체크
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectADBSRTCheck(Map<String, Object> param);
+
+    /**
+     * 펀드정보 체크
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> selectFundCheck(Map<String, Object> param);
+
+    /**
+     * Batch Id 조회
+     * @param param
+     * @return
+     */
     public Map<String, Object> selectGetBatchId(Map<String, Object> param);
 
+    /**
+     * 환율정보 등록
+     * @param vo
+     * @return
+     */
     int insertADEXRT(MainVO vo);
 
+    /**
+     * 시세정보 등록
+     * @param vo
+     * @return
+     */
     int insertADPRIF(MainVO vo);
 
+    /**
+     * 배치정보 등록
+     * @param param
+     * @return
+     */
     int insertADBAIF(Map<String, Object> param);
+
+    /**
+     * 테이블 내역 삭제
+     * @param param
+     * @return
+     */
+    int PROC_DELETE_ALL(Map<String, Object> param);
 
 }
