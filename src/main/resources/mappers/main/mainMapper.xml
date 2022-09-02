@@ -364,7 +364,7 @@
         }
     </insert>
 
-        <select id="selectFundListByBaseDate" parameterType="hashmap" resultType="hashmap">
+    <select id="selectFundListByBaseDate" parameterType="hashmap" resultType="hashmap">
         SELECT  F.BASE_DATE                         AS BASE_DATE
         ,       F.STND_ITEM_C                       AS STND_ITEM_C
         ,       I.ITEM_SHORT                        AS ITEM_SHORT
