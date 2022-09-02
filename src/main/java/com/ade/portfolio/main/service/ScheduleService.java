@@ -243,5 +243,29 @@ public class ScheduleService {
         param.put("BATCH_STATUS", "01");
         mainService.insertBatchInfo(param);
     }
+    
+    @Scheduled(cron = "* 55 9 * * TUE-SAT")
+    public void insertFund() {
 
+        Map<String, Object> param = Maps.newHashMap();
+
+        String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+        param.put("BASE_DATE", BASE_DATE);
+        
+        log.info("param : {} ", param);
+
+        // 체크
+        List<Map<String, Object>> fundList = mainMapper.selectFundListByBaseDate(param);
+
+        if(fundList.size() == 0){
+            // INSERT
+            log.info("# INSERT FUND ");
+            int result = mainMapper.insertFund(param);
+
+            param.put("BATCH_ID", "FU");
+            param.put("BATCH_STATUS", "01");
+            mainService.insertBatchInfo(param);
+        }
+
+    }
 }
