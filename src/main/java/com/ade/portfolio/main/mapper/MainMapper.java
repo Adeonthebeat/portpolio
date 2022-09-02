@@ -240,4 +240,8 @@ public interface MainMapper {
      */
     int PROC_DELETE_ALL(Map<String, Object> param);
 
+    public Map<String, Object> selectFundListByBaseDate(Map<String, Object> param);
+	
+    int insertFund(Map<String, Object> param);
+    
 }
