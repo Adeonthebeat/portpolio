@@ -397,7 +397,7 @@
         ,	CURRENT_DATE 						AS LST_CHNG_TIME
         FROM 	ADFUND  F
         ,       ADITEM  I
-        WHERE   F.BASE_DATE     = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE <= #{BASE_DATE})
+        WHERE   F.BASE_DATE     = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE &lt;= #{BASE_DATE})
         AND     F.STND_ITEM_C   = I.STND_ITEM_C
     </insert>
 </mapper>
