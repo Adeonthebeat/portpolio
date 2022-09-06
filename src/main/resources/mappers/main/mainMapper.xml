@@ -50,7 +50,7 @@
                 FROM    ADBSRT  B
                 ,       ADITEM  I
                 WHERE   B.STND_ITEM_C = I.STND_ITEM_C
-                AND     I.ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'STCK')
+                AND     I.ASTS_GD_TC  IN ('S', 'E')
                 GROUP BY BASE_MONTH
                 ORDER BY BASE_MONTH
             )   S,
@@ -61,7 +61,7 @@
                 FROM    ADBSRT  B
                 ,       ADITEM  I
                 WHERE   B.STND_ITEM_C = I.STND_ITEM_C
-                AND     I.ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'FUND')
+                AND     I.ASTS_GD_TC  IN ('P', 'R')
                 GROUP BY BASE_MONTH
                 ORDER BY BASE_MONTH
             )   P
@@ -246,15 +246,16 @@
     </select>
 
     <select id="selectCurCList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
-        SELECT 	TRIM(CODE)  AS curC
-        FROM 	ADCDGR
-        WHERE   CODE_ID     = 'CUR_C'
+       SELECT 	TRIM(CODE)  AS curC
+       FROM 	ADCDDE 
+       WHERE 	CODE_ID  = 'CUR_C'
+       AND 	CODE 	!= 'KRW'
     </select>
 
     <select id="selectGetPriceItemList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
         SELECT 	STND_ITEM_C  AS stndItemC
         FROM 	ADITEM
-        WHERE   ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'STCK')
+        WHERE   ASTS_GD_TC  IN ('S', 'E')
     </select>
 
     <select id="selectADPRIF" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
@@ -334,7 +335,7 @@
         AND 	P.BASE_DATE   = #{BASE_DATE}
         AND 	P.BASE_DATE   = E.BASE_DATE
         AND 	I.CUR_C 	  = E.CUR_C
-        AND 	I.ASTS_GD_TC  IN (SELECT CODE FROM ADCDGR WHERE CODE_GROUP = 'STCK')
+        AND 	I.ASTS_GD_TC  IN ('S', 'E')
     </select>
 
     <select id="selectGetBatchId" parameterType="hashmap" resultType="hashmap" >
