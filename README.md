@@ -28,7 +28,9 @@
  * 잔고
  * 평가
 
+## GITHUB LOG
+![Ade's GitHub stats](https://github-readme-stats.vercel.app/api?username=Adeonthebeat&show_icons=true&theme=radical)
+
 ### Limit
 * 로그인 처리 미완료
 
-![Ade's GitHub stats](https://github-readme-stats.vercel.app/api?username=Adeonthebeat&show_icons=true&theme=radical)
