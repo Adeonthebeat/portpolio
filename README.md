@@ -9,11 +9,11 @@
 * 중장기적인 투자계획을 지켜나가기 위함
 * 나의 투자일지를 기록하고 보여주기 
 * 개발자 스킬을 업그레이드 하기 위함
-* Oracle cloud (DB / VM)
-  * SpringBoot 
+  * ORACLE CLOUD (DB / VM)
+  * SPRINGBOOT
   * JENKINS
-  * github
-  * Docker
+  * GITHUB
+  * DOCKER
 
   
 ## Tech Stack
