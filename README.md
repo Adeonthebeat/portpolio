@@ -9,11 +9,11 @@
 * 중장기적인 투자계획을 지켜나가기 위함
 * 나의 투자일지를 기록하고 보여주기 
 * 개발자 스킬을 업그레이드 하기 위함
- ** Oracle cloud (DB / VM)
- ** SpringBoot 
- ** JENKINS
- ** github
- ** Docker
+  Oracle cloud (DB / VM)
+  SpringBoot 
+  JENKINS
+  github
+  Docker
 
 ## Tech Stack
 <img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring&logoColor=white"> <img src="https://img.shields.io/badge/oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white"> <img src="https://img.shields.io/badge/Apache Maven-C71A36?style=for-the-badge&logo=aws&logoColor=white">
@@ -29,3 +29,5 @@
 
 ### Limit
 * 로그인 처리 미완료
+
+![Ade's GitHub stats](https://github-readme-stats.vercel.app/api?username=Adeonthebeat&show_icons=true&theme=radical)
