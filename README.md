@@ -28,7 +28,7 @@
  * 잔고
  * 평가
 
-## GITHUB LOG
+## Github Log
 ![Ade's GitHub stats](https://github-readme-stats.vercel.app/api?username=Adeonthebeat&show_icons=true&theme=radical)
 
 ### Limit
