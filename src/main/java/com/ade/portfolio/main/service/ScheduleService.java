@@ -223,7 +223,7 @@ public class ScheduleService {
         }
     }
 
-    @Scheduled(cron = "* 10 10 * * MON-FRI")
+    @Scheduled(cron = "* 50 9 * * MON-FRI")
     public void PROC_DELETE_ALL() {
 
         int result = 0;
