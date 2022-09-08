@@ -372,7 +372,7 @@
         ,       F.TOT_BUY_AMT                       AS BUY_AMT
         ,       F.TOT_EST_AMT                       AS EST_AMT
         FROM 	ADFUND  F
-        ,       ADITEM  I
+        ,	ADITEM  I
         WHERE   F.BASE_DATE     = #{BASE_DATE}
         AND     F.STND_ITEM_C   = I.STND_ITEM_C
     </select>
@@ -388,14 +388,14 @@
         ,       LST_CHNG_NAME 
         ,       LST_CHNG_TIME
        	)
-        SELECT  FUNC_ADD_DATE(BASE_DATE, 1)				        AS BASE_DATE
-        ,	    I.STND_ITEM_C 						            AS STND_ITEM_C
-        ,	    I.ITEM_NAME 						            AS ITEM_NAME
-        ,	    F.TOT_BUY_AMT 						            AS TOT_BUY_AMT
-        ,	    F.TOT_EST_AMT 						            AS TOT_EST_AMT
-        ,	    (F.TOT_EST_AMT - F.TOT_BUY_AMT) / F.TOT_BUY_AMT AS YIELD
-        ,	    'ADE' 							                AS LST_CHNG_NAME
-        ,	    CURRENT_DATE 						            AS LST_CHNG_TIME
+        SELECT  FUNC_ADD_DATE(BASE_DATE, 1)				AS BASE_DATE
+        ,	I.STND_ITEM_C 						AS STND_ITEM_C
+        ,	I.ITEM_NAME 						AS ITEM_NAME
+        ,	F.TOT_BUY_AMT 						AS TOT_BUY_AMT
+        ,	F.TOT_EST_AMT 						AS TOT_EST_AMT
+        ,	(F.TOT_EST_AMT - F.TOT_BUY_AMT) / F.TOT_BUY_AMT 	AS YIELD
+        ,	'ADE' 							AS LST_CHNG_NAME
+        ,	CURRENT_DATE 						AS LST_CHNG_TIME
         FROM 	ADFUND  F
         ,       ADITEM  I
         WHERE   F.BASE_DATE     = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE &lt;= #{BASE_DATE})
