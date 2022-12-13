@@ -340,15 +340,14 @@
         var buyAmt3 = Number(itemChart[3].BUY_AMT);
         var buyAmt4 = Number(itemChart[4].BUY_AMT);
         var buyAmt5 = Number(itemChart[5].BUY_AMT);
-        var buyAmt6 = Number(itemChart[6].BUY_AMT);
-
+        
 
         // Single Bar Chart
         var ctx1 = $("#bar-charts").get(0).getContext("2d");
         var myChart4 = new Chart(ctx1, {
             type: "bar",
             data: {
-                labels  : [itemChart[0].ITEM_SHORT, itemChart[1].ITEM_SHORT, itemChart[2].ITEM_SHORT, itemChart[3].ITEM_SHORT, itemChart[4].ITEM_SHORT,itemChart[5].ITEM_SHORT, itemChart[6].ITEM_SHORT],
+                labels  : [itemChart[0].ITEM_SHORT, itemChart[1].ITEM_SHORT, itemChart[2].ITEM_SHORT, itemChart[3].ITEM_SHORT, itemChart[4].ITEM_SHORT,itemChart[5].ITEM_SHORT],
                 datasets: [{
                 backgroundColor: [
                     "rgba(0, 156, 255, .7)",
@@ -356,11 +355,10 @@
                     "rgba(0, 156, 255, .5)",
                     "rgba(0, 156, 255, .4)",
                     "rgba(0, 156, 255, .3)",
-                    "rgba(0, 156, 255, .2)",
-                    "rgba(0, 156, 255, .1)"
+                    "rgba(0, 156, 255, .2)"
                 ],
                 label : "주식",
-                data  : [buyAmt, buyAmt1, buyAmt2, buyAmt3, buyAmt4, buyAmt5, buyAmt6]
+                data  : [buyAmt, buyAmt1, buyAmt2, buyAmt3, buyAmt4, buyAmt5]
                 }]
             },
             options: {
@@ -403,15 +401,14 @@
         var estmRatio3 = Number(ratioChart[3].ESTM_RATIO);
         var estmRatio4 = Number(ratioChart[4].ESTM_RATIO);
         var estmRatio5 = Number(ratioChart[5].ESTM_RATIO);
-        var estmRatio6 = Number(ratioChart[6].ESTM_RATIO);
-
+        
 
         // Pie Chart
         var ctx5 = $("#pie-chart").get(0).getContext("2d");
         var myChart5 = new Chart(ctx5, {
             type: "pie",
             data: {
-                labels: [ratioChart[0].ITEM_SHORT, ratioChart[1].ITEM_SHORT, ratioChart[2].ITEM_SHORT, ratioChart[3].ITEM_SHORT, ratioChart[4].ITEM_SHORT, ratioChart[5].ITEM_SHORT, ratioChart[6].ITEM_SHORT],
+                labels: [ratioChart[0].ITEM_SHORT, ratioChart[1].ITEM_SHORT, ratioChart[2].ITEM_SHORT, ratioChart[3].ITEM_SHORT, ratioChart[4].ITEM_SHORT, ratioChart[5].ITEM_SHORT],
                 datasets: [{
                     backgroundColor: [
                         "rgba(0, 156, 255, .7)",
@@ -422,7 +419,7 @@
                         "rgba(0, 156, 255, .2)",
                         "rgba(0, 156, 255, .1)"
                     ],
-                    data : [estmRatio, estmRatio1, estmRatio2, estmRatio3, estmRatio4, estmRatio5, estmRatio6]
+                    data : [estmRatio, estmRatio1, estmRatio2, estmRatio3, estmRatio4, estmRatio5]
                 }]
             },
             options: {
