@@ -66,6 +66,7 @@
                 ORDER BY BASE_MONTH
             )   P
             WHERE    S.BASE_MONTH = P.BASE_MONTH
+	    AND      S.BASE_MONTH &gt;= TO_CHAR(ADD_MONTHS(SYSDATE, -3), 'YYYYMMDD')
         )
         ORDER BY FUNC_CONV_DATE(BASE_MONTH, '-', 'B')
     </select>
