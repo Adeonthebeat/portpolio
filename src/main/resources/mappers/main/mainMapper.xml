@@ -152,33 +152,23 @@
     </insert>
 
     <insert id="PROC_TRIS_TO_BASE" parameterType="hashmap" statementType="CALLABLE">
-        {
-            CALL  ADMIN.PROC_TRIS_TO_BASE(#{BASE_DATE},#{STND_ITEM_C, mode=IN, jdbcType=VARCHAR})
-        }
+        {CALL  ADMIN.PROC_TRIS_TO_BASE(#{BASE_DATE},#{STND_ITEM_C, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_BASE_TO_ONE" parameterType="hashmap" statementType="CALLABLE">
-        {
-            CALL  ADMIN.PROC_BASE_TO_ONE(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
-        }
+        {CALL  ADMIN.PROC_BASE_TO_ONE(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_BASE_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
-        {
-            CALL  ADMIN.PROC_BASE_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
-        }
+        {CALL  ADMIN.PROC_BASE_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_FUND_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
-        {
-            CALL  ADMIN.PROC_FUND_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
-        }
+        {CALL  ADMIN.PROC_FUND_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_BASE_TO_ESTM" parameterType="hashmap" statementType="CALLABLE">
-        {
-            CALL  ADMIN.PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
-        }
+        {CALL  ADMIN.PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <select id="selectBusiDay" parameterType="hashmap" resultType="hashmap">
@@ -254,49 +244,61 @@
     </select>
 
     <select id="selectGetPriceItemList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
-        SELECT 	STND_ITEM_C  AS stndItemC
+        SELECT 	STND_ITEM_C AS stndItemC
+        ,       CUR_C       AS curC
         FROM 	ADITEM
         WHERE   ASTS_GD_TC  IN ('S', 'E')
     </select>
 
-    <select id="selectADPRIF" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
-        SELECT 	STND_ITEM_C  AS stndItemC
-        FROM 	ADPRIF
-        WHERE   BASE_DATE   = #{baseDate}
-        AND     STND_ITEM_C = #{stndItemC}
+    <select id="selectGetPriceFundList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+        SELECT 	STND_ITEM_C AS stndItemC
+        ,       CUR_C       AS curC
+        FROM 	ADITEM
+        WHERE   ASTS_GD_TC = 'R'
     </select>
 
     <insert id="insertADEXRT" parameterType="com.ade.portfolio.main.model.MainVO">
         INSERT INTO ADEXRT
-        (       BASE_DATE
-        ,       CUR_C
-        ,       TRD_EXCH_RATE
-        ,       LST_CHNG_NAME
-        ,       LST_CHNG_TIME
-        ) VALUES
-        (       #{baseDate}
-        ,       #{curC}
-        ,       #{exchRate}
-        ,       'ADE'
-        ,       CURRENT_DATE
+        (   BASE_DATE
+        ,   CUR_C
+        ,   TRD_EXCH_RATE
+        ,   LST_CHNG_NAME
+        ,   LST_CHNG_TIME
+        )   VALUES
+        (   #{baseDate}
+        ,   #{curC}
+        ,   #{exchRate}
+        ,   'ADE'
+        ,   CURRENT_DATE
         )
     </insert>
 
     <insert id="insertADPRIF" parameterType="com.ade.portfolio.main.model.MainVO">
-        INSERT INTO ADPRIF
-        (       BASE_DATE
-        ,       STND_ITEM_C
-        ,       PRICE
-        ,       CUR_C
-        ,       LST_CHNG_NAME
-        ,       LST_CHNG_TIME
-        ) VALUES
-        (       #{baseDate}
-        ,       #{stndItemC}
-        ,       #{price}
-        ,       #{curC}
-        ,       'ADE'
-        ,       CURRENT_DATE
+        MERGE INTO ADE_ITEM_PRICE M
+        USING  DUAL S
+            ON 	(M.BASE_DATE = #{baseDate}
+            AND M.STND_ITEM_C = #{stndItemC})
+        WHEN MATCHED THEN
+        UPDATE
+        SET 	M.PRICE = #{price}
+        ,		M.CUR_C = #{curC}
+        ,		M.LST_CHNG_NAME = 'ADE'
+        ,		M.LST_CHNG_TIME = CURRENT_DATE
+        WHEN NOT MATCHED THEN
+        INSERT
+        (   BASE_DATE
+        ,   STND_ITEM_C
+        ,   PRICE
+        ,   CUR_C
+        ,   LST_CHNG_NAME
+        ,   LST_CHNG_TIME
+        )   VALUES
+        (   #{baseDate}
+        ,   #{stndItemC}
+        ,   #{price}
+        ,   #{curC}
+        ,   'ADE'
+        ,   CURRENT_DATE
         )
     </insert>
 
@@ -361,9 +363,7 @@
     </insert>
 
     <insert id="PROC_DELETE_ALL" parameterType="hashmap" statementType="CALLABLE">
-        {
-        CALL  ADMIN.PROC_DELETE_ALL(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})
-        }
+        {CALL  ADMIN.PROC_DELETE_ALL(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <select id="selectFundListByBaseDate" parameterType="hashmap" resultType="hashmap">
@@ -379,27 +379,38 @@
     </select>
 
     <insert id="insertFund" parameterType="hashmap">
-	INSERT INTO ADE_FUND_BALANCE 
+	    INSERT INTO ADE_FUND_BALANCE
        	(       BASE_DATE
         ,       STND_ITEM_C
         ,       ITEM_NAME
+        ,       BASE_PRICE
+        ,       EST_PRICE
+        ,       BASE_QUANTITY
         ,       TOT_BUY_AMT
         ,       TOT_EST_AMT
         ,       YIELD
         ,       LST_CHNG_NAME 
         ,       LST_CHNG_TIME
        	)
-        SELECT  FUNC_ADD_DATE(BASE_DATE, 1)				AS BASE_DATE
+        SELECT  FUNC_ADD_DATE(BASE_DATE, 1)		AS BASE_DATE
         ,	I.STND_ITEM_C 						AS STND_ITEM_C
         ,	I.ITEM_NAME 						AS ITEM_NAME
+        ,   F.BASE_PRICE                        AS BASE_PRICE
+        ,   F.EST_PRICE                         AS EST_PRICE
+        ,   F.BASE_QUANTITY                     AS BASE_QUANTITY
         ,	F.TOT_BUY_AMT 						AS TOT_BUY_AMT
         ,	F.TOT_EST_AMT 						AS TOT_EST_AMT
         ,	(F.TOT_EST_AMT - F.TOT_BUY_AMT) / F.TOT_BUY_AMT 	AS YIELD
-        ,	'ADE' 							AS LST_CHNG_NAME
+        ,	'ADE' 							    AS LST_CHNG_NAME
         ,	CURRENT_DATE 						AS LST_CHNG_TIME
         FROM 	ADFUND  F
         ,       ADITEM  I
         WHERE   F.BASE_DATE     = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE &lt;= #{BASE_DATE})
         AND     F.STND_ITEM_C   = I.STND_ITEM_C
     </insert>
+
+    <insert id="PROC_PRICE_TO_FUND" parameterType="hashmap" statementType="CALLABLE">
+        {CALL  ADMIN.PROC_PRICE_TO_FUND(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
+    </insert>
+
 </mapper>

@@ -2,7 +2,6 @@ package com.ade.portfolio.main.service;
 
 import com.ade.portfolio.main.mapper.MainMapper;
 import com.ade.portfolio.main.model.MainVO;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -13,11 +12,6 @@ import org.springframework.stereotype.Service;
 import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
 
-import javax.jws.Oneway;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +86,6 @@ public class ScheduleService {
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
             vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
-            vo.setCurC(YahooFinance.get(vo.getStndItemC()).getCurrency());
 
             log.info("------------------------------------------");
             log.info("# 기준일자 : " + vo.getBaseDate());
@@ -101,15 +94,41 @@ public class ScheduleService {
             log.info("# 통화코드 : " + vo.getCurC());
             log.info("------------------------------------------");
 
-            MainVO list = mainMapper.selectADPRIF(vo);
-            if(list == null){
-                log.info("# insertADPRIF ");
-                result = mainMapper.insertADPRIF(vo);
+            log.info("# insertADPRIF ");
+            result = mainMapper.insertADPRIF(vo);
 
-                param.put("BATCH_ID", "PR");
-                param.put("BATCH_STATUS", "01");
-                mainService.insertBatchInfo(param);
-            }
+            param.put("BATCH_ID", "PR");
+            param.put("BATCH_STATUS", "01");
+            mainService.insertBatchInfo(param);
+        }
+    }
+
+    @Scheduled(cron = "* 7 10 * * TUE-SAT")
+    public void getPriceFund() throws Exception {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        List<MainVO> itemList = mainService.selectGetPriceFundList();
+        String baseDate = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+
+        for(MainVO vo : itemList){
+            vo.setBaseDate(baseDate);
+            vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
+
+            log.info("------------------------------------------");
+            log.info("# 기준일자 : " + vo.getBaseDate());
+            log.info("# 종목코드 : " + vo.getStndItemC());
+            log.info("# 기준가격 : " + vo.getPrice());
+            log.info("# 통화코드 : " + vo.getCurC());
+            log.info("------------------------------------------");
+
+            log.info("# insertADPRIF ");
+            result = mainMapper.insertADPRIF(vo);
+
+            param.put("BATCH_ID", "PR");
+            param.put("BATCH_STATUS", "01");
+            mainService.insertBatchInfo(param);
         }
     }
 
@@ -146,6 +165,23 @@ public class ScheduleService {
                 mainService.insertBatchInfo(param);
             }
         }
+    }
+
+    @Scheduled(cron = "* 17 10 * * TUE-SAT")
+    public void PROC_PRICE_TO_FUND() {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        String BASE_DATE = MapUtils.getString(mainMapper.selectBeforeBusiDay(param), "BASE_DATE");
+
+        log.info("# PROC_PRICE_TO_FUND ");
+        result = mainMapper.PROC_PRICE_TO_FUND(param);
+
+        param.put("BATCH_ID", "BO");
+        param.put("BATCH_STATUS", "01");
+        mainService.insertBatchInfo(param);
+
     }
 
     @Scheduled(cron = "* 20 10 * * TUE-SAT")

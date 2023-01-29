@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
@@ -55,6 +53,10 @@ public class MainService {
 
     public List<Map<String, Object>> selectItemList(Map<String, Object> param) {
         return mainMapper.selectItemList(param);
+    }
+
+    public List<MainVO> selectGetPriceFundList() {
+        return mainMapper.selectGetPriceFundList();
     }
 
     /**
@@ -176,10 +178,10 @@ public class MainService {
 
         List<MainVO> itemList = this.selectGetPriceItemList();
         String baseDate = MapUtils.getString(this.selectBeforeBusiDay(param), "BASE_DATE");
+
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
             vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
-            vo.setCurC(YahooFinance.get(vo.getStndItemC()).getCurrency());
 
             log.info("------------------------------------------");
             log.info("# 기준일자 : " + vo.getBaseDate());
@@ -188,16 +190,13 @@ public class MainService {
             log.info("# 통화코드 : " + vo.getCurC());
             log.info("------------------------------------------");
 
-            MainVO list = mainMapper.selectADPRIF(vo);
-            if(list == null){
-                log.info("# insertADPRIF ");
-                result = mainMapper.insertADPRIF(vo);
+            log.info("# insertADPRIF ");
+            result = mainMapper.insertADPRIF(vo);
 
-                param.put("BATCH_ID", "PR");
-                param.put("BATCH_STATUS", "01");
+            param.put("BATCH_ID", "PR");
+            param.put("BATCH_STATUS", "01");
 
-                this.insertBatchInfo(param);
-            }
+            this.insertBatchInfo(param);
         }
 
     }

@@ -152,13 +152,6 @@ public interface MainMapper {
     public MainVO selectExchRateList(MainVO vo);
 
     /**
-     * 시세정보 체크
-     * @param vo
-     * @return
-     */
-    public MainVO selectADPRIF(MainVO vo);
-
-    /**
      * 환율코드 조회
      * @return
      */
@@ -240,8 +233,12 @@ public interface MainMapper {
      */
     int PROC_DELETE_ALL(Map<String, Object> param);
 
-    public List<Map<String, Object>> selectFundListByBaseDate(Map<String, Object> param);
+    List<Map<String, Object>> selectFundListByBaseDate(Map<String, Object> param);
 	
     int insertFund(Map<String, Object> param);
+
+    List<MainVO> selectGetPriceFundList();
+
+    int PROC_PRICE_TO_FUND(Map<String, Object> param);
     
 }
