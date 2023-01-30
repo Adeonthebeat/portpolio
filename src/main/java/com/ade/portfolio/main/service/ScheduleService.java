@@ -178,7 +178,7 @@ public class ScheduleService {
         log.info("# PROC_PRICE_TO_FUND ");
         result = mainMapper.PROC_PRICE_TO_FUND(param);
 
-        param.put("BATCH_ID", "BO");
+        param.put("BATCH_ID", "FO");
         param.put("BATCH_STATUS", "01");
         mainService.insertBatchInfo(param);
 
