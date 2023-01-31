@@ -175,6 +175,8 @@ public class ScheduleService {
 
         String BASE_DATE = MapUtils.getString(mainMapper.selectBeforeBusiDay(param), "BASE_DATE");
 
+        param.put("BASE_DATE", BASE_DATE);
+        
         log.info("# PROC_PRICE_TO_FUND ");
         result = mainMapper.PROC_PRICE_TO_FUND(param);
 
