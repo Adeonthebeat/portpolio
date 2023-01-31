@@ -74,7 +74,7 @@ public class ScheduleService {
 
     }
 
-    @Scheduled(cron = "* 5 10 * * TUE-SAT")
+    @Scheduled(cron = "* 5 10 * * MON-FRI")
     public void getPrice() throws Exception {
 
         int result = 0;
@@ -103,14 +103,14 @@ public class ScheduleService {
         }
     }
 
-    @Scheduled(cron = "* 7 10 * * TUE-SAT")
+    @Scheduled(cron = "* 30 15 * * MON-FRI")
     public void getPriceFund() throws Exception {
 
         int result = 0;
         Map<String, Object> param = Maps.newHashMap();
 
         List<MainVO> itemList = mainService.selectGetPriceFundList();
-        String baseDate = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+        String baseDate = MapUtils.getString(mainService.selectBusiDay(param), "BASE_DATE");
 
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
@@ -132,7 +132,7 @@ public class ScheduleService {
         }
     }
 
-    @Scheduled(cron = "* 15 10 * * TUE-SAT")
+    @Scheduled(cron = "* 15 10 * * MON-FRI")
     public void PROC_BASE_TO_ONE() {
 
         int result = 0;
@@ -167,7 +167,7 @@ public class ScheduleService {
         }
     }
 
-    @Scheduled(cron = "* 17 10 * * TUE-SAT")
+    @Scheduled(cron = "* 40 15 * * MON-FRI")
     public void PROC_PRICE_TO_FUND() {
 
         int result = 0;
@@ -186,7 +186,7 @@ public class ScheduleService {
 
     }
 
-    @Scheduled(cron = "* 20 10 * * TUE-SAT")
+    @Scheduled(cron = "* 20 10 * * MON-FRI")
     public void PROC_BASE_TO_ESTM() {
 
         int result = 0;
@@ -282,7 +282,7 @@ public class ScheduleService {
         mainService.insertBatchInfo(param);
     }
     
-    @Scheduled(cron = "* 55 9 * * TUE-SAT")
+    @Scheduled(cron = "* 55 9 * * MON-FRI")
     public void insertFund() {
 
         Map<String, Object> param = Maps.newHashMap();
