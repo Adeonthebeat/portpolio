@@ -186,7 +186,7 @@ public class ScheduleService {
 
     }
 
-    @Scheduled(cron = "* 20 10 * * MON-FRI")
+    @Scheduled(cron = "* 50 15 * * MON-FRI")
     public void PROC_BASE_TO_ESTM() {
 
         int result = 0;
@@ -236,7 +236,7 @@ public class ScheduleService {
 
     }
 
-    @Scheduled(cron = "* 35 10 * * MON-FRI")
+    @Scheduled(cron = "* 55 15 * * MON-FRI")
     public void PROC_FUND_TO_RATIO() {
 
         int result = 0;
@@ -282,7 +282,7 @@ public class ScheduleService {
         mainService.insertBatchInfo(param);
     }
     
-    @Scheduled(cron = "* 55 9 * * MON-FRI")
+    @Scheduled(cron = "* 05 15 * * MON-FRI")
     public void insertFund() {
 
         Map<String, Object> param = Maps.newHashMap();
