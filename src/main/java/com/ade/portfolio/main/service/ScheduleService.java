@@ -25,6 +25,52 @@ public class ScheduleService {
     @Autowired
     private MainService mainService;
 
+    @Scheduled(cron = "* 50 9 * * MON-FRI")
+    public void PROC_DELETE_ALL() {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+
+        param.put("BASE_DATE", BASE_DATE);
+
+        log.info("param : {} ", param);
+
+        // INSERT
+        log.info("# PROC_DELETE_ALL ");
+        result = mainMapper.PROC_DELETE_ALL(param);
+
+        param.put("BATCH_ID", "DA");
+        param.put("BATCH_STATUS", "01");
+        mainService.insertBatchInfo(param);
+    }
+    
+    @Scheduled(cron = "* 55 09 * * MON-FRI")
+    public void insertFund() {
+
+        Map<String, Object> param = Maps.newHashMap();
+
+        String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+        param.put("BASE_DATE", BASE_DATE);
+        
+        log.info("param : {} ", param);
+
+        // 체크
+        List<Map<String, Object>> fundList = mainMapper.selectFundListByBaseDate(param);
+
+        if(fundList.size() == 0){
+            // INSERT
+            log.info("# INSERT FUND ");
+            int result = mainMapper.insertFund(param);
+
+            param.put("BATCH_ID", "FU");
+            param.put("BATCH_STATUS", "01");
+            mainService.insertBatchInfo(param);
+        }
+
+    }
+    
     @Scheduled(cron = "* 0 10 * * MON-FRI")
     public void getExchRate() throws Exception {
 
@@ -71,7 +117,6 @@ public class ScheduleService {
 
             }
         }
-
     }
 
     @Scheduled(cron = "* 5 10 * * MON-FRI")
@@ -82,35 +127,6 @@ public class ScheduleService {
 
         List<MainVO> itemList = mainService.selectGetPriceItemList();
         String baseDate = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
-
-        for(MainVO vo : itemList){
-            vo.setBaseDate(baseDate);
-            vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
-
-            log.info("------------------------------------------");
-            log.info("# 기준일자 : " + vo.getBaseDate());
-            log.info("# 종목코드 : " + vo.getStndItemC());
-            log.info("# 기준가격 : " + vo.getPrice());
-            log.info("# 통화코드 : " + vo.getCurC());
-            log.info("------------------------------------------");
-
-            log.info("# insertADPRIF ");
-            result = mainMapper.insertADPRIF(vo);
-
-            param.put("BATCH_ID", "PR");
-            param.put("BATCH_STATUS", "01");
-            mainService.insertBatchInfo(param);
-        }
-    }
-
-    @Scheduled(cron = "* 30 15 * * MON-FRI")
-    public void getPriceFund() throws Exception {
-
-        int result = 0;
-        Map<String, Object> param = Maps.newHashMap();
-
-        List<MainVO> itemList = mainService.selectGetPriceFundList();
-        String baseDate = MapUtils.getString(mainService.selectBusiDay(param), "BASE_DATE");
 
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
@@ -186,29 +202,6 @@ public class ScheduleService {
 
     }
 
-    @Scheduled(cron = "* 30 10 * * MON-FRI")
-    public void PROC_BASE_TO_ESTM() {
-
-        int result = 0;
-        Map<String, Object> param = Maps.newHashMap();
-
-        param.put("BASE_DATE", MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE"));
-
-        // CHECK
-        List<Map<String, Object>> adbaseCheck = mainMapper.selectADBASECheck(param);
-        List<Map<String, Object>> adestmCheck = mainMapper.selectADESTMCheck(param);
-
-        if(adbaseCheck.size() > 0 && adestmCheck.size() == 0){
-            // INSERT
-            log.info("# PROC_BASE_TO_ESTM ");
-            result = mainMapper.PROC_BASE_TO_ESTM(param);
-
-            param.put("BATCH_ID", "BE");
-            param.put("BATCH_STATUS", "01");
-            mainService.insertBatchInfo(param);
-        }
-    }
-
     @Scheduled(cron = "* 20 10 * * MON-FRI")
     public void PROC_BASE_TO_RATIO() {
 
@@ -260,50 +253,56 @@ public class ScheduleService {
             mainService.insertBatchInfo(param);
         }
     }
-
-    @Scheduled(cron = "* 50 9 * * MON-FRI")
-    public void PROC_DELETE_ALL() {
+    
+    @Scheduled(cron = "* 30 10 * * MON-FRI")
+    public void PROC_BASE_TO_ESTM() {
 
         int result = 0;
         Map<String, Object> param = Maps.newHashMap();
 
-        String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+        param.put("BASE_DATE", MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE"));
 
-        param.put("BASE_DATE", BASE_DATE);
+        // CHECK
+        List<Map<String, Object>> adbaseCheck = mainMapper.selectADBASECheck(param);
+        List<Map<String, Object>> adestmCheck = mainMapper.selectADESTMCheck(param);
 
-        log.info("param : {} ", param);
-
-        // INSERT
-        log.info("# PROC_DELETE_ALL ");
-        result = mainMapper.PROC_DELETE_ALL(param);
-
-        param.put("BATCH_ID", "DA");
-        param.put("BATCH_STATUS", "01");
-        mainService.insertBatchInfo(param);
-    }
-    
-    @Scheduled(cron = "* 55 09 * * MON-FRI")
-    public void insertFund() {
-
-        Map<String, Object> param = Maps.newHashMap();
-
-        String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
-        param.put("BASE_DATE", BASE_DATE);
-        
-        log.info("param : {} ", param);
-
-        // 체크
-        List<Map<String, Object>> fundList = mainMapper.selectFundListByBaseDate(param);
-
-        if(fundList.size() == 0){
+        if(adbaseCheck.size() > 0 && adestmCheck.size() == 0){
             // INSERT
-            log.info("# INSERT FUND ");
-            int result = mainMapper.insertFund(param);
+            log.info("# PROC_BASE_TO_ESTM ");
+            result = mainMapper.PROC_BASE_TO_ESTM(param);
 
-            param.put("BATCH_ID", "FU");
+            param.put("BATCH_ID", "BE");
             param.put("BATCH_STATUS", "01");
             mainService.insertBatchInfo(param);
         }
+    }
 
+    @Scheduled(cron = "* 30 15 * * MON-FRI")
+    public void getPriceFund() throws Exception {
+
+        int result = 0;
+        Map<String, Object> param = Maps.newHashMap();
+
+        List<MainVO> itemList = mainService.selectGetPriceFundList();
+        String baseDate = MapUtils.getString(mainService.selectBusiDay(param), "BASE_DATE");
+
+        for(MainVO vo : itemList){
+            vo.setBaseDate(baseDate);
+            vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
+
+            log.info("------------------------------------------");
+            log.info("# 기준일자 : " + vo.getBaseDate());
+            log.info("# 종목코드 : " + vo.getStndItemC());
+            log.info("# 기준가격 : " + vo.getPrice());
+            log.info("# 통화코드 : " + vo.getCurC());
+            log.info("------------------------------------------");
+
+            log.info("# insertADPRIF ");
+            result = mainMapper.insertADPRIF(vo);
+
+            param.put("BATCH_ID", "PR");
+            param.put("BATCH_STATUS", "01");
+            mainService.insertBatchInfo(param);
+        }
     }
 }
