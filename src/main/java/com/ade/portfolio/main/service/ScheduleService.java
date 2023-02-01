@@ -282,7 +282,7 @@ public class ScheduleService {
         mainService.insertBatchInfo(param);
     }
     
-    @Scheduled(cron = "* 05 15 * * MON-FRI")
+    @Scheduled(cron = "* 55 09 * * MON-FRI")
     public void insertFund() {
 
         Map<String, Object> param = Maps.newHashMap();
