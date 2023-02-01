@@ -186,7 +186,7 @@ public class ScheduleService {
 
     }
 
-    @Scheduled(cron = "* 50 15 * * MON-FRI")
+    @Scheduled(cron = "* 40 10 * * MON-FRI")
     public void PROC_BASE_TO_ESTM() {
 
         int result = 0;
