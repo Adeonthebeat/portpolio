@@ -244,6 +244,7 @@
     </select>
 
     <select id="selectGetPriceItemList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+	/* 잔고 가격 대상 조회 */
         SELECT 	STND_ITEM_C AS stndItemC
         ,       CUR_C       AS curC
         FROM 	ADITEM
@@ -251,6 +252,7 @@
     </select>
 
     <select id="selectGetPriceFundList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+	/* 펀드 가격 대상 조회 */
         SELECT 	STND_ITEM_C AS stndItemC
         ,       CUR_C       AS curC
         FROM 	ADITEM
@@ -258,6 +260,7 @@
     </select>
 
     <insert id="insertADEXRT" parameterType="com.ade.portfolio.main.model.MainVO">
+	/* 환율정보 입력 */
         INSERT INTO ADEXRT
         (   BASE_DATE
         ,   CUR_C
@@ -274,6 +277,7 @@
     </insert>
 
     <insert id="insertADPRIF" parameterType="com.ade.portfolio.main.model.MainVO">
+	/* 가격정보 입력 */
         MERGE INTO ADE_ITEM_PRICE M
         USING  DUAL S
             ON 	(M.BASE_DATE = #{baseDate}
@@ -303,6 +307,7 @@
     </insert>
 
     <select id="selectADBASECheck" parameterType="hashmap" resultType="hashmap">
+	/* 잔고 체크 */
         SELECT  STND_ITEM_C AS STND_ITEM_C
         FROM    ADBASE
         WHERE   BASE_DATE   = #{BASE_DATE}
@@ -312,24 +317,28 @@
     </select>
 
     <select id="selectFundCheck" parameterType="hashmap" resultType="hashmap">
+	/* 펀드 체크 */
         SELECT  STND_ITEM_C AS STND_ITEM_C
         FROM    ADFUND
         WHERE   BASE_DATE  = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE &lt;= #{BASE_DATE})
     </select>
 
     <select id="selectADESTMCheck" parameterType="hashmap" resultType="hashmap">
+	/* 평가 체크 */
         SELECT  BASE_DATE   AS BASE_DATE
         FROM    ADESTM
         WHERE   BASE_DATE   = #{BASE_DATE}
     </select>
 
     <select id="selectADBSRTCheck" parameterType="hashmap" resultType="hashmap">
+	/* 비율 체크 */
         SELECT  STND_ITEM_C   AS STND_ITEM_C
         FROM    ADBSRT
         WHERE   BASE_MONTH = SUBSTR(#{BASE_DATE}, 0, 6)
     </select>
 
     <select id="selectCommonCheck" parameterType="hashmap" resultType="hashmap" >
+	/* 공통 체크 */
         SELECT 	I.STND_ITEM_C   AS STND_ITEM_C
         FROM    ADITEM 	I
         ,       ADPRIF 	P
@@ -337,16 +346,18 @@
         WHERE 	P.STND_ITEM_C = I.STND_ITEM_C
         AND 	P.BASE_DATE   = #{BASE_DATE}
         AND 	P.BASE_DATE   = E.BASE_DATE
-        AND 	I.CUR_C 	  = E.CUR_C
+        AND 	I.CUR_C       = E.CUR_C
         AND 	I.ASTS_GD_TC  IN ('S', 'E')
     </select>
 
     <select id="selectGetBatchId" parameterType="hashmap" resultType="hashmap" >
+	/* 공통코드(BATCH_ID) 조회 */
         SELECT 	FUNC_GET_RMKS('BATCH_ID', #{BATCH_ID}) AS CODE
         FROM 	DUAL
     </select>
 
     <insert id="insertADBAIF" parameterType="hashmap">
+	/* 배치 이력 */
         INSERT INTO ADBAIF
         (       BATCH_ID
         ,       BATCH_PROC_TIME
@@ -363,10 +374,12 @@
     </insert>
 
     <insert id="PROC_DELETE_ALL" parameterType="hashmap" statementType="CALLABLE">
+	/* 잔여 데이터 삭제 */
         {CALL  ADMIN.PROC_DELETE_ALL(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <select id="selectFundListByBaseDate" parameterType="hashmap" resultType="hashmap">
+	/* 펀드 대상 조회 /
         SELECT  F.BASE_DATE                         AS BASE_DATE
         ,       F.STND_ITEM_C                       AS STND_ITEM_C
         ,       I.ITEM_SHORT                        AS ITEM_SHORT
@@ -379,7 +392,8 @@
     </select>
 
     <insert id="insertFund" parameterType="hashmap">
-	    INSERT INTO ADE_FUND_BALANCE
+	/* 전날 펀드 잔고 등록 */
+	INSERT INTO ADE_FUND_BALANCE
        	(       BASE_DATE
         ,       STND_ITEM_C
         ,       ITEM_NAME
@@ -392,17 +406,17 @@
         ,       LST_CHNG_NAME 
         ,       LST_CHNG_TIME
        	)
-        SELECT  FUNC_ADD_DATE(BASE_DATE, 1)		AS BASE_DATE
-        ,	I.STND_ITEM_C 						AS STND_ITEM_C
-        ,	I.ITEM_NAME 						AS ITEM_NAME
-        ,   F.BASE_PRICE                        AS BASE_PRICE
-        ,   F.EST_PRICE                         AS EST_PRICE
-        ,   F.BASE_QUANTITY                     AS BASE_QUANTITY
-        ,	F.TOT_BUY_AMT 						AS TOT_BUY_AMT
-        ,	F.TOT_EST_AMT 						AS TOT_EST_AMT
-        ,	(F.TOT_EST_AMT - F.TOT_BUY_AMT) / F.TOT_BUY_AMT 	AS YIELD
-        ,	'ADE' 							    AS LST_CHNG_NAME
-        ,	CURRENT_DATE 						AS LST_CHNG_TIME
+        SELECT  FUNC_ADD_DATE(BASE_DATE, 1)			AS BASE_DATE
+        ,	I.STND_ITEM_C 					AS STND_ITEM_C
+        ,	I.ITEM_NAME 					AS ITEM_NAME
+        ,   	F.BASE_PRICE                        		AS BASE_PRICE
+        ,   	F.EST_PRICE                         		AS EST_PRICE
+        ,   	F.BASE_QUANTITY                     		AS BASE_QUANTITY
+        ,	F.TOT_BUY_AMT 					AS TOT_BUY_AMT
+        ,	F.TOT_EST_AMT 					AS TOT_EST_AMT
+        ,	(F.TOT_EST_AMT - F.TOT_BUY_AMT) / F.TOT_BUY_AMT AS YIELD
+        ,	'ADE' 						AS LST_CHNG_NAME
+        ,	CURRENT_DATE 					AS LST_CHNG_TIME
         FROM 	ADFUND  F
         ,       ADITEM  I
         WHERE   F.BASE_DATE     = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE &lt;= #{BASE_DATE})
@@ -410,7 +424,8 @@
     </insert>
 
     <insert id="PROC_PRICE_TO_FUND" parameterType="hashmap" statementType="CALLABLE">
-        {CALL  ADMIN.PROC_PRICE_TO_FUND(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
+	/* 펀드 가격 정보 */
+	{CALL  ADMIN.PROC_PRICE_TO_FUND(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
 </mapper>
