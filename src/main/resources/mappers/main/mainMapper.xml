@@ -204,6 +204,7 @@
     </select>
 
     <select id="selectTrisList" parameterType="hashmap" resultType="hashmap">
+	/* 거래정보 리스트 조회 */
         SELECT 	TR_DATE         AS TR_DATE
         ,       STND_ITEM_C     AS STND_ITEM_C
         ,       ITEM_NAME       AS ITEM_NAME
@@ -219,6 +220,7 @@
     </select>
 
     <select id="selectStndItemCList" parameterType="hashmap" resultType="hashmap">
+	/* 종목정보 리스트 조회 */
         SELECT 	STND_ITEM_C     AS STND_ITEM_C
         ,       ITEM_SHORT      AS ITEM_SHORT
         FROM 	ADITEM
@@ -226,6 +228,7 @@
     </select>
 
     <select id="selectFundCList" parameterType="hashmap" resultType="hashmap">
+	/* 펀드정보 리스트 조회 */
         SELECT 	STND_ITEM_C     AS STND_ITEM_C
         ,       ITEM_SHORT      AS ITEM_SHORT
         FROM 	ADITEM
@@ -233,6 +236,7 @@
     </select>
 
     <select id="selectFundList" parameterType="hashmap" resultType="hashmap">
+	/* 펀드정보 단건 조회 */
         SELECT 	STND_ITEM_C     AS STND_ITEM_C
         ,       ITEM_SHORT      AS ITEM_SHORT
         FROM 	ADFUND
@@ -241,6 +245,7 @@
     </select>
 
     <select id="selectExchRateList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+	/* 환율정보 조회 */
         SELECT 	BASE_DATE       AS baseDate
         ,       CUR_C           AS curC
         ,       TRD_EXCH_RATE   AS exchRate
@@ -250,6 +255,7 @@
     </select>
 
     <select id="selectCurCList" parameterType="com.ade.portfolio.main.model.MainVO" resultType="com.ade.portfolio.main.model.MainVO">
+	/* 공통코드(환율코드) 조회 */
        SELECT 	TRIM(CODE)  AS curC
        FROM 	ADCDDE 
        WHERE 	CODE_ID  = 'CUR_C'
