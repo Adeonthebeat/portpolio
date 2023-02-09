@@ -281,9 +281,9 @@
         WHEN MATCHED THEN
         UPDATE
         SET 	M.PRICE = #{price}
-        ,		M.CUR_C = #{curC}
-        ,		M.LST_CHNG_NAME = 'ADE'
-        ,		M.LST_CHNG_TIME = CURRENT_DATE
+        ,	M.CUR_C = #{curC}
+        ,	M.LST_CHNG_NAME = 'ADE'
+        ,	M.LST_CHNG_TIME = CURRENT_DATE
         WHEN NOT MATCHED THEN
         INSERT
         (   BASE_DATE
