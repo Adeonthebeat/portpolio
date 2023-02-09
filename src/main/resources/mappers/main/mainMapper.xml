@@ -4,6 +4,7 @@
 <mapper namespace="com.ade.portfolio.main.mapper.MainMapper">
 
     <select id="selectTopInfo" parameterType="hashmap" resultType="hashmap">
+	/* 평가정보 */
         SELECT  BASE_DATE                                               AS BASE_DATE
         ,       TO_CHAR(TOT_BUY_AMT, 'FM999,999,999,999')               AS TOT_BUY_AMT
         ,       TO_CHAR(TOT_EST_AMT, 'FM999,999,999,999')               AS TOT_EST_AMT
@@ -19,6 +20,7 @@
     </select>
 
     <select id="selectItemChart" parameterType="hashmap" resultType="hashmap">
+	/* 종목정보 */
         SELECT  B.BASE_DATE                             AS BASE_DATE
         ,      	B.STND_ITEM_C                           AS STND_ITEM_C
         ,      	I.ITEM_SHORT                            AS ITEM_SHORT
@@ -98,6 +100,7 @@
     </select>
 
     <select id="selectItemList" parameterType="hashmap" resultType="hashmap">
+	/* 보유종목 상세정보 */
         WITH ITEMLIST AS
         (
             SELECT  B.BASE_DATE                                                         AS BASE_DATE
@@ -130,6 +133,7 @@
     </select>
 
     <insert id="PROC_TRIS_TO_TRIS" parameterType="hashmap" statementType="CALLABLE">
+	/* 거래내역 */
         {   CALL  ADMIN.PROC_TRIS_TO_TRIS
             (
                 #{TR_DATE},
@@ -141,6 +145,7 @@
     </insert>
 
     <insert id="PROC_FUND_TO_FUND" parameterType="hashmap" statementType="CALLABLE">
+	/* 펀드거래 */
         {   CALL  ADMIN.PROC_FUND_TO_FUND
             (
                 #{BASE_DATE     , mode=IN, jdbcType=VARCHAR},
@@ -152,36 +157,44 @@
     </insert>
 
     <insert id="PROC_TRIS_TO_BASE" parameterType="hashmap" statementType="CALLABLE">
+	/* 거래에서 잔고 */
         {CALL  ADMIN.PROC_TRIS_TO_BASE(#{BASE_DATE},#{STND_ITEM_C, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_BASE_TO_ONE" parameterType="hashmap" statementType="CALLABLE">
+	/* 잔고화 */
         {CALL  ADMIN.PROC_BASE_TO_ONE(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_BASE_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
+	/* 잔고 비율화 */
         {CALL  ADMIN.PROC_BASE_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_FUND_TO_RATIO" parameterType="hashmap" statementType="CALLABLE">
+	/* 펀드 비율화 */
         {CALL  ADMIN.PROC_FUND_TO_RATIO(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <insert id="PROC_BASE_TO_ESTM" parameterType="hashmap" statementType="CALLABLE">
+	/* 잔고평가 */
         {CALL  ADMIN.PROC_BASE_TO_ESTM(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
     <select id="selectBusiDay" parameterType="hashmap" resultType="hashmap">
+	/* -30일부터 오늘 */
         SELECT 	FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'B')    AS BASE_DATE
         FROM 	DUAL
     </select>
 
     <select id="selectBeforeBusiDay" parameterType="hashmap" resultType="hashmap">
+	/* -30일부터 전날 */
         SELECT 	FUNC_GET_BUSI_DAY(TO_CHAR(SYSDATE, 'YYYYMMDD'), 'BB')    AS BASE_DATE
         FROM 	DUAL
     </select>
 
     <select id="selectPriceList" parameterType="hashmap" resultType="hashmap">
+	/* 가격정보 조회 */
         SELECT 	BASE_DATE       AS BASE_DATE
         ,       STND_ITEM_C     AS STND_ITEM_C
         ,       PRICE           AS PRICE
