@@ -339,8 +339,6 @@
         var buyAmt1 = Number(itemChart[1].BUY_AMT);
         var buyAmt2 = Number(itemChart[2].BUY_AMT);
         var buyAmt3 = Number(itemChart[3].BUY_AMT);
-        var buyAmt4 = Number(itemChart[4].BUY_AMT);
-        var buyAmt5 = Number(itemChart[5].BUY_AMT);
         
 
         // Single Bar Chart
@@ -348,15 +346,13 @@
         var myChart4 = new Chart(ctx1, {
             type: "bar",
             data: {
-                labels  : [itemChart[0].ITEM_SHORT, itemChart[1].ITEM_SHORT, itemChart[2].ITEM_SHORT, itemChart[3].ITEM_SHORT, itemChart[4].ITEM_SHORT,itemChart[5].ITEM_SHORT],
+                labels  : [itemChart[0].ITEM_SHORT, itemChart[1].ITEM_SHORT, itemChart[2].ITEM_SHORT, itemChart[3].ITEM_SHORT,
                 datasets: [{
                 backgroundColor: [
                     "rgba(0, 156, 255, .7)",
                     "rgba(0, 156, 255, .6)",
                     "rgba(0, 156, 255, .5)",
-                    "rgba(0, 156, 255, .4)",
-                    "rgba(0, 156, 255, .3)",
-                    "rgba(0, 156, 255, .2)"
+                    "rgba(0, 156, 255, .4)"
                 ],
                 label : "주식",
                 data  : [buyAmt, buyAmt1, buyAmt2, buyAmt3, buyAmt4, buyAmt5]
@@ -400,8 +396,6 @@
         var estmRatio1 = Number(ratioChart[1].ESTM_RATIO);
         var estmRatio2 = Number(ratioChart[2].ESTM_RATIO);
         var estmRatio3 = Number(ratioChart[3].ESTM_RATIO);
-        var estmRatio4 = Number(ratioChart[4].ESTM_RATIO);
-        var estmRatio5 = Number(ratioChart[5].ESTM_RATIO);
         
 
         // Pie Chart
@@ -409,15 +403,13 @@
         var myChart5 = new Chart(ctx5, {
             type: "pie",
             data: {
-                labels: [ratioChart[0].ITEM_SHORT, ratioChart[1].ITEM_SHORT, ratioChart[2].ITEM_SHORT, ratioChart[3].ITEM_SHORT, ratioChart[4].ITEM_SHORT, ratioChart[5].ITEM_SHORT],
+                labels: [ratioChart[0].ITEM_SHORT, ratioChart[1].ITEM_SHORT, ratioChart[2].ITEM_SHORT, ratioChart[3].ITEM_SHORT,
                 datasets: [{
                     backgroundColor: [
                         "rgba(0, 156, 255, .7)",
                         "rgba(0, 156, 255, .6)",
                         "rgba(0, 156, 255, .5)",
-                        "rgba(0, 156, 255, .4)",
-                        "rgba(0, 156, 255, .3)",
-                        "rgba(0, 156, 255, .2)"
+                        "rgba(0, 156, 255, .4)"
                     ],
                     data : [estmRatio, estmRatio1, estmRatio2, estmRatio3, estmRatio4, estmRatio5]
                 }]
