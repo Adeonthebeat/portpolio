@@ -408,6 +408,7 @@
         ,	ADITEM  I
         WHERE   F.BASE_DATE     = #{BASE_DATE}
         AND     F.STND_ITEM_C   = I.STND_ITEM_C
+	AND 	I.ASTS_GD_TC = 'P'
     </select>
 
     <insert id="insertFund" parameterType="hashmap">
