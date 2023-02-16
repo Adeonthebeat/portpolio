@@ -441,6 +441,7 @@
         ,       ADITEM  I
         WHERE   F.BASE_DATE     = (SELECT MAX(BASE_DATE) FROM ADFUND WHERE BASE_DATE &lt;= #{BASE_DATE})
         AND     F.STND_ITEM_C   = I.STND_ITEM_C
+	AND 	I.ASTS_GD_TC    = 'P'
     </insert>
 
     <insert id="PROC_PRICE_TO_FUND" parameterType="hashmap" statementType="CALLABLE">
