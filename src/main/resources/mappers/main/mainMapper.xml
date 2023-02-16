@@ -74,7 +74,7 @@
     </select>
 
     <select id="selectRatioChart" parameterType="hashmap" resultType="hashmap">
-        /* 종목비율(차트) */
+        /* 종목비율(차트)  */
         SELECT  B.BASE_MONTH                    AS BASE_MONTH
         ,       B.STND_ITEM_C                   AS STND_ITEM_C
         ,       I.ITEM_SHORT                    AS ITEM_SHORT
