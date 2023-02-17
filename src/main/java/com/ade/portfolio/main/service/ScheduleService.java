@@ -35,8 +35,6 @@ public class ScheduleService {
 
         param.put("BASE_DATE", BASE_DATE);
 
-        log.info("param : {} ", param);
-
         // INSERT
         log.info("# PROC_DELETE_ALL ");
         result = mainMapper.PROC_DELETE_ALL(param);
@@ -54,11 +52,6 @@ public class ScheduleService {
         String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
         param.put("BASE_DATE", BASE_DATE);
         
-        log.info("param : {} ", param);
-
-        // 체크
-        List<Map<String, Object>> fundList = mainMapper.selectFundListByBaseDate(param);
-
         if(fundList.size() == 0){
             // INSERT
             log.info("# INSERT FUND ");
