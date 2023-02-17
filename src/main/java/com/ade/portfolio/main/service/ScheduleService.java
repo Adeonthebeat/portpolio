@@ -52,15 +52,13 @@ public class ScheduleService {
         String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
         param.put("BASE_DATE", BASE_DATE);
         
-        if(fundList.size() == 0){
-            // INSERT
-            log.info("# INSERT FUND ");
-            int result = mainMapper.insertFund(param);
+        // INSERT
+        log.info("# INSERT FUND ");
+        int result = mainMapper.insertFund(param);
 
-            param.put("BATCH_ID", "FU");
-            param.put("BATCH_STATUS", "01");
-            mainService.insertBatchInfo(param);
-        }
+        param.put("BATCH_ID", "FU");
+        param.put("BATCH_STATUS", "01");
+        mainService.insertBatchInfo(param);
 
     }
     
