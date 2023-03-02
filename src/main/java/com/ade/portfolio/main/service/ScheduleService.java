@@ -44,24 +44,6 @@ public class ScheduleService {
         mainService.insertBatchInfo(param);
     }
     
-    @Scheduled(cron = "* 55 09 * * MON-FRI")
-    public void insertFund() {
-
-        Map<String, Object> param = Maps.newHashMap();
-
-        String BASE_DATE = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
-        param.put("BASE_DATE", BASE_DATE);
-        
-        // INSERT
-        log.info("# INSERT FUND ");
-        int result = mainMapper.insertFund(param);
-
-        param.put("BATCH_ID", "FU");
-        param.put("BATCH_STATUS", "01");
-        mainService.insertBatchInfo(param);
-
-    }
-    
     @Scheduled(cron = "* 0 10 * * MON-FRI")
     public void getExchRate() throws Exception {
 
