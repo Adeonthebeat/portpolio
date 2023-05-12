@@ -1,30 +1,46 @@
 package com.ade.portfolio.main.service;
 
+import com.ade.portfolio.main.configuration.JasyptConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
-import yahoofinance.histquotes.Interval;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
-import java.io.IOException;
-import java.util.Calendar;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
-@Service
 @Slf4j
 public class Practice {
 
-    @Autowired
-    private MainService mainService;
-
-
-    public void solution() throws Exception{
-        mainService.getPrice();
+    static {
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void main(String[] args) throws Exception {
-        Practice main = new Practice();
-        main.solution();
+    public void testConnection() {
+        try (Connection con =
+                     DriverManager.getConnection(
+                             "jdbc:oracle:thin:@여기에디비이름?TNS_ADMIN=여기에지갑경로",
+                             "계정이름",
+                             "계정비밀번호"
+                     )) {
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
+    public static void main(String[] args) {
+//        String password = "jdbc:oracle:thin:@orcl_high?TNS_ADMIN=/Users/leehyeok/codingTest/Wallet_orcl";
+//
+//        StandardPBEStringEncryptor jasypt = new StandardPBEStringEncryptor();
+//        jasypt.setPassword(password);
+//        jasypt.setAlgorithm("PBEWithMD5AndDES"); // 암호화 알고리즘
+//
+//        String encryptedText = jasypt.encrypt(password);
+//        String decryptedText = jasypt.decrypt(encryptedText);
+//
+//        System.out.println("encryptedText = " + encryptedText);
+//        System.out.println("decryptedText = " + decryptedText);
+    }
 }

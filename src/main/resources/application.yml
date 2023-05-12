@@ -19,17 +19,13 @@ spring:
     mode : HTML
     encoding: UTF-8
   datasource:
-    driverClassName: oracle.jdbc.driver.OracleDriver
-    url: ENC(/WK1BZAlvEnLYPgTrcQlL393Euxa90+r0jPpKDyoi0S7ULuPUeEHEwfHPuMMYDdAVp986DSH19GdRpK4g3NCduyTI8AJOh3HkO1nsrNYv1k=)
-    username: ENC(RMHjB+Q7TgJTXOZtMrORAA==)
-    password: ENC(vwFsNez1nwfm7cWNw2kNY8mSqjxQaBX5)
+    driverClassName: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@orcl_high?TNS_ADMIN=./src/main/resources/Wallet_orcl
+    username: admin
+    password: Dkepqk780200
   management:
     endpoints.enabled-by-default=false
     endpoint.info.enabled=true
-
-  jasypt:
-    encryptor:
-      bean: jasyptStringEncryptor
 
   freemarker:
     checkTemplateLocation: false

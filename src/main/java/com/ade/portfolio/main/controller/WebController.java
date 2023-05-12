@@ -1,12 +1,10 @@
 package com.ade.portfolio.main.controller;
 
-import com.ade.portfolio.main.model.MainVO;
 import com.ade.portfolio.main.service.MainService;
 import com.ade.portfolio.main.service.ScheduleService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
