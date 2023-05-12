@@ -17,9 +17,9 @@
 	<name>portfolio</name>
 	<description>Ade portfolio</description>
 	<properties>
-		<java.version>18</java.version>
-		<maven.compiler.source>18</maven.compiler.source>
-		<maven.compiler.target>18</maven.compiler.target>
+		<java.version>11</java.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
 	<packaging>jar</packaging>
 
