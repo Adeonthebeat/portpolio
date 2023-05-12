@@ -172,8 +172,8 @@
 					<execution>
 						<configuration>
 							<mainClass>com.ade.portfolio.PortpolioApplication</mainClass>
-							<source>11</source>
-							<target>11</target>
+							<source>11.0.19</source>
+							<target>11.0.19</target>
 						</configuration>
 					</execution>
 				</executions>
