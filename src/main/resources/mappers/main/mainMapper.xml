@@ -405,7 +405,7 @@
         ,       F.TOT_BUY_AMT                       AS BUY_AMT
         ,       F.TOT_EST_AMT                       AS EST_AMT
         FROM 	ADFUND  F
-        ,	ADITEM  I
+        ,	    ADITEM  I
         WHERE   F.BASE_DATE     = #{BASE_DATE}
         AND     F.STND_ITEM_C   = I.STND_ITEM_C
 	    AND 	I.ASTS_GD_TC = 'P'
