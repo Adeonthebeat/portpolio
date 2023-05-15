@@ -173,6 +173,7 @@
 							<mainClass>com.ade.portfolio.PortpolioApplication</mainClass>
 							<source>11</source>
 							<target>11</target>
+							<executable>/usr/lib/jvm/java-11-openjdk/bin/javac</executable>
 						</configuration>
 					</execution>
 				</executions>
