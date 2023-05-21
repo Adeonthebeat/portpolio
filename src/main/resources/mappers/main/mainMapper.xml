@@ -416,4 +416,63 @@
         {CALL  ADMIN.PROC_PRICE_TO_FUND(#{BASE_DATE, mode=IN, jdbcType=VARCHAR})}
     </insert>
 
+    <insert id="insertBM" parameterType="hashmap">
+        MERGE INTO ADE_BENCHMARK_INFO  A
+        USING DUAL B
+           ON (A.BASE_WEEK = #{BASE_WEEK}
+           AND A.BM_CODE = #{BM_CODE})
+        WHEN MATCHED THEN
+        UPDATE
+        SET     BM_NM       = #{BM_NM}
+        ,       CLOSE_PRICE = #{CLOSE_PRICE}
+        ,       VOLUME      = #{VOLUME}
+        WHERE   BASE_WEEK   = #{BASE_WEEK}
+        AND     BM_CODE     = #{BM_CODE}
+        WHEN NOT MATCHED THEN
+        INSERT
+        (   BASE_WEEK
+        ,   BM_CODE
+        ,   BM_NM
+        ,   CLOSE_PRICE
+        ,   VOLUME
+        )   VALUES
+        (   #{BASE_WEEK}
+        ,   #{BM_CODE}
+        ,   #{BM_NM}
+        ,   #{CLOSE_PRICE}
+        ,   #{VOLUME}
+        )
+    </insert>
+
+    <select id="selectIndustryInfo" parameterType="hashmap" resultType="hashmap">
+        SELECT  STND_ITEM_C
+        ,       ITEM_NAME
+        FROM    ADE_INDUSRTY_INFO
+    </select>
+
+    <insert id="insertIndustryPrice" parameterType="hashmap">
+        MERGE INTO ADE_INDUSRTY_PRICE_INFO  A
+        USING DUAL B
+           ON (A.BASE_WEEK   = #{BASE_WEEK}
+          AND  A.STND_ITEM_C = #{STND_ITEM_C})
+        WHEN MATCHED THEN
+        UPDATE
+        SET     ITEM_NAME   = #{ITEM_NAME}
+        ,       CLOSE_PRICE = #{CLOSE_PRICE}
+        WHERE   BASE_WEEK   = #{BASE_WEEK}
+        AND     STND_ITEM_C = #{STND_ITEM_C}
+        WHEN NOT MATCHED THEN
+        INSERT
+        (   BASE_WEEK
+        ,   STND_ITEM_C
+        ,   ITEM_NAME
+        ,   CLOSE_PRICE
+        )   VALUES
+        (   #{BASE_WEEK}
+        ,   #{STND_ITEM_C}
+        ,   #{ITEM_NAME}
+        ,   #{CLOSE_PRICE}
+        )
+    </insert>
+
 </mapper>

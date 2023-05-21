@@ -9,9 +9,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
+import yahoofinance.histquotes.HistoricalQuote;
+import yahoofinance.histquotes.Interval;
 import yahoofinance.quotes.fx.FxQuote;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +65,8 @@ public class ScheduleService {
         // 기준일자
         String baseDate = MapUtils.getString(mainService.selectBusiDay(param), "BASE_DATE");
 
+        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
+
         for(int i = 0; i < curCList.size(); i++){
 
             // 환율
@@ -100,6 +107,8 @@ public class ScheduleService {
 
         List<MainVO> itemList = mainService.selectGetPriceItemList();
         String baseDate = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
+
+        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
 
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
@@ -259,6 +268,8 @@ public class ScheduleService {
         List<MainVO> itemList = mainService.selectGetPriceFundList();
         String baseDate = MapUtils.getString(mainService.selectBusiDay(param), "BASE_DATE");
 
+        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
+
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
             vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
@@ -278,4 +289,91 @@ public class ScheduleService {
             mainService.insertBatchInfo(param);
         }
     }
+
+    //@Scheduled(cron = "* 40 20 * * *")
+    public void insertBM() throws Exception {
+
+        Calendar from = Calendar.getInstance();
+        Calendar to = Calendar.getInstance();
+        from.add(Calendar.DATE, -365);
+
+        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
+
+        String[] symbols = new String[] { "^KS11", "VTI"};
+        Map<String, Stock> stocks = YahooFinance.get(symbols, true);
+
+        for(Map.Entry<String, Stock> ele : stocks.entrySet()) {
+            List<HistoricalQuote> stockHis = ele.getValue().getHistory(from, to, Interval.WEEKLY);
+
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+
+            for(HistoricalQuote historicalQuote : stockHis) {
+
+                Map<String, Object> param = Maps.newHashMap();
+
+                String baseDate = df.format(historicalQuote.getDate().getTime());
+                String BM_CODE = historicalQuote.getSymbol().replace("^", "");
+                String BM_NAME = "";
+
+                param.put("BM_CODE", BM_CODE);
+                param.put("BASE_WEEK", baseDate);
+                if(StringUtils.equalsIgnoreCase(BM_CODE, "KS11")) {
+                    BM_NAME = "코스피";
+                } else if(StringUtils.equalsIgnoreCase(BM_CODE, "VTI")) {
+                    BM_NAME = "미국";
+                }
+                param.put("BM_NM", BM_NAME);
+                param.put("CLOSE_PRICE", historicalQuote.getAdjClose());
+                param.put("VOLUME", historicalQuote.getVolume());
+
+                mainMapper.insertBM(param);
+
+            }
+        }
+    }
+
+//    @Scheduled(cron = "* 23 22 * * *")
+    public void insertIndustryPrice() throws Exception {
+
+        Map<String, Object> param = Maps.newHashMap();
+
+        Calendar from = Calendar.getInstance();
+        Calendar to = Calendar.getInstance();
+        from.add(Calendar.DATE, -365);
+
+        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
+
+        List<Map<String, Object>> industryInfo = mainMapper.selectIndustryInfo(param);
+
+        for(Map<String, Object> info : industryInfo) {
+
+            String STND_ITEM_C = MapUtils.getString(info, "STND_ITEM_C");
+            String ITEM_NAME = MapUtils.getString(info, "ITEM_NAME");
+
+            Stock stock = YahooFinance.get(STND_ITEM_C);
+
+            List<HistoricalQuote> stockHis = stock.getHistory(from, to, Interval.WEEKLY);
+
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+
+            for(HistoricalQuote historicalQuote : stockHis) {
+
+                Map<String, Object> result = Maps.newHashMap();
+
+                String baseDate = df.format(historicalQuote.getDate().getTime());
+
+                result.put("BASE_WEEK", baseDate);
+                result.put("STND_ITEM_C", STND_ITEM_C);
+                result.put("ITEM_NAME", ITEM_NAME);
+                result.put("CLOSE_PRICE", historicalQuote.getAdjClose());
+
+                mainMapper.insertIndustryPrice(result);
+
+            }
+
+        }
+
+    }
+
+
 }

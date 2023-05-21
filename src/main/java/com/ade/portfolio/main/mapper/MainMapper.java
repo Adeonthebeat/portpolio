@@ -240,5 +240,11 @@ public interface MainMapper {
     List<MainVO> selectGetPriceFundList();
 
     int PROC_PRICE_TO_FUND(Map<String, Object> param);
+
+    int insertBM(Map<String, Object> param);
+
+    int insertIndustryPrice(Map<String, Object> param);
+
+    List<Map<String, Object>> selectIndustryInfo(Map<String, Object> param);
     
 }
