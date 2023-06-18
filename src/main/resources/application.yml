@@ -25,8 +25,8 @@ spring:
   datasource:
     driverClassName: oracle.jdbc.driver.OracleDriver
     url: ENC(Qzl2hieUGWyndT1EptjOpal1UsJB6k8tDLxpaIu8D/AZKjEsjVNMmR41hIBy45F0erOyt02MCQf5mhqQ1x5ZE0/BjLCuvylgaQ1+UHKSmAs=)
-    username: ENC(1qOL1oXXR1RDRkQjP0Y6gA==)
-    password: ENC(qGOm8Y2g0Cju5tTiytFCa9SeJzTgu2+m)
+    username: ENC(XQcTrm7cbtoF3Wg/9oPzCw==)
+    password: ENC(emKSEEfmqQz8zGgD3nfuZTOynfZvzFdg)
 
   jasypt:
     encryptor:
