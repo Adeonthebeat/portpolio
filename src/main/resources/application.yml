@@ -24,9 +24,9 @@ spring:
     encoding: UTF-8
   datasource:
     driverClassName: oracle.jdbc.driver.OracleDriver
-    url: ENC(U6afZVwJUyCX6fAugPVBUO00h2znltetkmVWaN1I8eJ0yHzWdPpDa1v7kPJL+7Ey5bZSfPR2J5BNQuo+hcI9OqxIRqh62Sj7H9ULJdLrgKg=)
-    username: ENC(kPJikRzrjh5rdvogToJCWg==)
-    password: ENC(TSyaFftpjxZa78xCciWjaHIfwc0tziHn)
+    url: jdbc:oracle:thin:@orcl_high?TNS_ADMIN=./src/main/resources/Wallet_orcl
+    username: admin
+    password: Dkepqk780@08
 
 
   jasypt:
