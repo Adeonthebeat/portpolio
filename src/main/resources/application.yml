@@ -28,6 +28,7 @@ spring:
     username: ENC(XQcTrm7cbtoF3Wg/9oPzCw==)
     password: ENC(joKLehk58l8rrCgEJvBR4Z7PAc1UyPJ4)
 
+
   jasypt:
     encryptor:
       bean: jasyptStringEncryptor
