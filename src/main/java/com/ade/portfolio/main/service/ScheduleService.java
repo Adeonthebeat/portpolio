@@ -3,9 +3,13 @@ package com.ade.portfolio.main.service;
 import com.ade.portfolio.main.mapper.MainMapper;
 import com.ade.portfolio.main.model.MainVO;
 import com.google.common.collect.Maps;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -13,8 +17,10 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
+import yahoofinance.query2v8.HistQuotesQuery2V8Request;
 import yahoofinance.quotes.fx.FxQuote;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -48,7 +54,7 @@ public class ScheduleService {
         param.put("BATCH_STATUS", "01");
         mainService.insertBatchInfo(param);
     }
-    
+
     @Scheduled(cron = "* 0 10 * * MON-FRI")
     public void getExchRate() throws Exception {
 
@@ -64,8 +70,6 @@ public class ScheduleService {
 
         // 기준일자
         String baseDate = MapUtils.getString(mainService.selectBusiDay(param), "BASE_DATE");
-
-        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
 
         for(int i = 0; i < curCList.size(); i++){
 
@@ -108,12 +112,24 @@ public class ScheduleService {
         List<MainVO> itemList = mainService.selectGetPriceItemList();
         String baseDate = MapUtils.getString(mainService.selectBeforeBusiDay(param), "BASE_DATE");
 
-        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
-
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
-            vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
 
+            HistQuotesQuery2V8Request stockInfo = new HistQuotesQuery2V8Request(vo.getStndItemC());
+
+            JSONObject jsonObject = new JSONObject(stockInfo.getJson());
+            jsonObject = new JSONObject(jsonObject.get("chart").toString());
+            String resultJson = jsonObject.get("result").toString();
+            JSONArray jsonArray = new JSONArray(resultJson);
+
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = (JSONObject) jsonArray.get(i);
+                JSONObject parseJson = (JSONObject) json.get("meta");
+
+                // 가격
+                Double price = (Double) parseJson.get("regularMarketPrice");
+                vo.setPrice(BigDecimal.valueOf(price));
+            }
             log.info("------------------------------------------");
             log.info("# 기준일자 : " + vo.getBaseDate());
             log.info("# 종목코드 : " + vo.getStndItemC());
@@ -121,7 +137,6 @@ public class ScheduleService {
             log.info("# 통화코드 : " + vo.getCurC());
             log.info("------------------------------------------");
 
-            log.info("# insertADPRIF ");
             result = mainMapper.insertADPRIF(vo);
 
             param.put("BATCH_ID", "PR");
@@ -268,8 +283,6 @@ public class ScheduleService {
         List<MainVO> itemList = mainService.selectGetPriceFundList();
         String baseDate = MapUtils.getString(mainService.selectBusiDay(param), "BASE_DATE");
 
-        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
-
         for(MainVO vo : itemList){
             vo.setBaseDate(baseDate);
             vo.setPrice(YahooFinance.get(vo.getStndItemC()).getQuote().getPrice());
@@ -296,8 +309,6 @@ public class ScheduleService {
         Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
         from.add(Calendar.DATE, -365);
-
-        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
 
         String[] symbols = new String[] { "^KS11", "VTI"};
         Map<String, Stock> stocks = YahooFinance.get(symbols, true);
@@ -340,8 +351,6 @@ public class ScheduleService {
         Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
         from.add(Calendar.DATE, -365);
-
-        System.setProperty("yahoofinance.baseurl.quotesquery1v7", "https://query1.finance.yahoo.com/v6/finance/quote");
 
         List<Map<String, Object>> industryInfo = mainMapper.selectIndustryInfo(param);
 
