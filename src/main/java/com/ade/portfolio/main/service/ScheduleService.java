@@ -3,8 +3,6 @@ package com.ade.portfolio.main.service;
 import com.ade.portfolio.main.mapper.MainMapper;
 import com.ade.portfolio.main.model.MainVO;
 import com.google.common.collect.Maps;
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,8 +58,8 @@ public class ScheduleService {
 
         int result = 0;
         Map<String, Object> param = Maps.newHashMap();
-        FxQuote usdkrw = YahooFinance.getFx("USDKRW=X");
-        FxQuote eurkrw = YahooFinance.getFx("EURKRW=X");
+
+        FxQuote USDKRW = new FxQuote("USDKRW=X");
 
         MainVO vo = new MainVO();
 
@@ -77,11 +75,7 @@ public class ScheduleService {
             if(StringUtils.equals(curCList.get(i).getCurC(), "USD")){
                 vo.setBaseDate(baseDate);
                 vo.setCurC(curCList.get(i).getCurC());
-                vo.setExchRate(usdkrw.getPrice());
-            } else if(StringUtils.equals(curCList.get(i).getCurC(), "EUR")){
-                vo.setBaseDate(baseDate);
-                vo.setCurC(curCList.get(i).getCurC());
-                vo.setExchRate(eurkrw.getPrice());
+                vo.setExchRate(USDKRW.getPrice());
             }
             MainVO list = mainService.selectExchRateList(vo);
 
