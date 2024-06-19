@@ -21,16 +21,9 @@
 
     <select id="selectItemChart" parameterType="hashmap" resultType="hashmap">
 	    /* 종목정보 */
-        SELECT  B.BASE_DATE                             AS BASE_DATE
-        ,      	B.STND_ITEM_C                           AS STND_ITEM_C
-        ,      	I.ITEM_SHORT                            AS ITEM_SHORT
-        ,      	FUNC_RN((B.BUY_AMT * B.QUANTITY) , 2)   AS BUY_AMT
-        ,      	FUNC_RN((B.EST_AMT * B.QUANTITY) , 2)   AS EST_AMT
-        FROM    ADBASE  B
-        ,      	ADITEM  I
-        WHERE   B.BASE_DATE    = (SELECT MAX(BB.BASE_DATE) FROM ADBASE BB)
-        AND     B.STND_ITEM_C  = I.STND_ITEM_C
-        ORDER BY I.ITEM_SHORT
+        SELECT 	STND_ITEM_C             AS name
+        ,		ROUND(RATIO * 100, 1)   AS y
+        FROM 	ADE_BALANCE_RATIO_INFO
     </select>
 
     <select id="selectBaseChart" parameterType="hashmap" resultType="hashmap">
@@ -103,11 +96,11 @@
 	    /* 보유종목 상세정보 */
         WITH ITEMLIST AS
         (
-            SELECT  B.BASE_DATE                                                         AS BASE_DATE
-            ,       B.STND_ITEM_C                                                       AS STND_ITEM_C
-            ,       I.ITEM_SHORT                                                        AS ITEM_SHORT
-            ,       FUNC_GET_EXRT(B.BASE_DATE, 'USD', FUNC_RN(B.BUY_AMT * QUANTITY, 2)) AS BUY_AMT
-            ,       FUNC_GET_EXRT(B.BASE_DATE, 'USD', FUNC_RN(B.EST_AMT * QUANTITY, 2)) AS EST_AMT
+            SELECT  B.BASE_DATE                         AS BASE_DATE
+            ,       B.STND_ITEM_C                       AS STND_ITEM_C
+            ,       I.ITEM_SHORT                        AS ITEM_SHORT
+            ,       FUNC_RN(B.BUY_AMT * QUANTITY, 2)    AS BUY_AMT
+            ,       FUNC_RN(B.EST_AMT * QUANTITY, 2)    AS EST_AMT
             FROM    ADITEM    I
             ,       ADBASE    B
             WHERE   I.STND_ITEM_C = B.STND_ITEM_C

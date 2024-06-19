@@ -53,7 +53,7 @@ public class ScheduleService {
         mainService.insertBatchInfo(param);
     }
 
-    @Scheduled(cron = "* 0 10 * * MON-FRI")
+//    @Scheduled(cron = "* 0 10 * * MON-FRI")
     public void getExchRate() throws Exception {
 
         int result = 0;
@@ -174,7 +174,7 @@ public class ScheduleService {
         }
     }
 
-    @Scheduled(cron = "* 15 10 * * MON-FRI")
+//    @Scheduled(cron = "* 15 10 * * MON-FRI")
     public void PROC_PRICE_TO_FUND() {
 
         int result = 0;
@@ -220,7 +220,7 @@ public class ScheduleService {
 
     }
 
-    @Scheduled(cron = "* 25 10 * * MON-FRI")
+//    @Scheduled(cron = "* 25 10 * * MON-FRI")
     public void PROC_FUND_TO_RATIO() {
 
         int result = 0;
@@ -245,7 +245,7 @@ public class ScheduleService {
         }
     }
     
-    @Scheduled(cron = "* 30 10 * * MON-FRI")
+//    @Scheduled(cron = "* 30 10 * * MON-FRI")
     public void PROC_BASE_TO_ESTM() {
 
         int result = 0;
@@ -268,7 +268,7 @@ public class ScheduleService {
         }
     }
 
-    @Scheduled(cron = "* 30 15 * * MON-FRI")
+//    @Scheduled(cron = "* 30 15 * * MON-FRI")
     public void getPriceFund() throws Exception {
 
         int result = 0;

@@ -30,6 +30,10 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 </head>
 
 <body>
@@ -160,14 +164,18 @@
 
 
             <!-- Sales Chart Start -->
-<!--            <div class="container-fluid pt-4 px-4">-->
-<!--                <div class="row g-4">-->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+
+<!--                    <figure class="highcharts-figure">-->
+<!--                        <div id="ratio_stock"></div>-->
+<!--                    </figure>-->
 <!--                    <div class="col-sm-12 col-xl-6">-->
 <!--                        <div class="bg-light text-center rounded p-4">-->
 <!--                            <div class="d-flex align-items-center justify-content-between mb-4">-->
 <!--                                <h6 class="mb-0">종목별 매수금액</h6>-->
 <!--                            </div>-->
-<!--                            <canvas id="bar-charts"></canvas>-->
+<!--                                <div id="ratio_stock"></div>-->
 <!--                        </div>-->
 <!--                    </div>-->
 <!--                    <div class="col-sm-12 col-xl-6">-->
@@ -178,10 +186,10 @@
 <!--                            <canvas id="salse-revenue"></canvas>-->
 <!--                        </div>-->
 <!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Sales Chart End &ndash;&gt;-->
-<!--            <div class="container-fluid pt-4 px-4">-->
+                </div>
+            </div>
+            <!-- Sales Chart End -->
+            <div class="container-fluid pt-4 px-4">
 <!--                <div class="row g-4">-->
 <!--                    <div class="col-sm-12 col-xl-6">-->
 <!--                        <div class="bg-light text-center rounded p-4">-->
@@ -200,7 +208,7 @@
 <!--                        </div>-->
 <!--                    </div>-->
 <!--                </div>-->
-<!--            </div>-->
+            </div>
 
 <!--             <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">
@@ -256,7 +264,10 @@
             </div>
  -->
 
-                <!-- Recent Sales Start -->
+
+
+
+            <!-- Recent Sales Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="bg-light text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
@@ -336,110 +347,76 @@
 
         var itemChart = [[${itemChart}]];
 
-        var buyAmt = Number(itemChart[0].BUY_AMT);
-        
+        console.log("# itemChart : " + JSON.stringify(itemChart));
 
-        // Single Bar Chart
-        var ctx1 = $("#bar-charts").get(0).getContext("2d");
-        var myChart4 = new Chart(ctx1, {
-            type: "bar",
-            data: {
-                labels  : [itemChart[0].ITEM_SHORT],
-                datasets: [{
-                backgroundColor: [
-                    "rgba(0, 156, 255, .7)"
-                ],
-                label : "주식",
-                data  : [buyAmt]
-                }]
+        Highcharts.chart('ratio_stock', {
+            chart: {
+                type: 'pie'
             },
-            options: {
-                responsive: true
-            }
+            title: {
+                text: '종목별 매수금액'
+            },
+            tooltip: {
+                valueSuffix: '%'
+            },
+            plotOptions: {
+                series: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: [{
+                        enabled: true,
+                        distance: 20
+                    }, {
+                        enabled: true,
+                        distance: -40,
+                        format: '{point.percentage:.1f}%',
+                        style: {
+                            fontSize: '1.2em',
+                            textOutline: 'none',
+                            opacity: 0.7
+                        },
+                        filter: {
+                            operator: '>',
+                            property: 'percentage',
+                            value: 10
+                        }
+                    }]
+                }
+            },
+            series: [
+                {
+                    name: 'Percentage',
+                    colorByPoint: true,
+                    data: [
+                        {
+                            name: 'Water',
+                            y: 55.02
+                        },
+                        {
+                            name: 'Fat',
+                            sliced: true,
+                            selected: true,
+                            y: 26.71
+                        },
+                        {
+                            name: 'Carbohydrates',
+                            y: 1.09
+                        },
+                        {
+                            name: 'Protein',
+                            y: 15.5
+                        },
+                        {
+                            name: 'Ash',
+                            y: 1.68
+                        }
+                    ]
+                }
+            ]
         });
 
-        // 잔고비율
-        var baseChart = [[${baseChart}]];
 
-        // Salse & Revenue Chart
-        var ctx2 = $("#salse-revenue").get(0).getContext("2d");
-        var myChart2 = new Chart(ctx2, {
-            type: "line",
-            data: {
-                labels: [baseChart[0].BASE_MONTH, baseChart[1].BASE_MONTH, baseChart[2].BASE_MONTH],
-                datasets: [{
-                        label: "매수금액",
-                        data: [baseChart[0].TOT_AMT, baseChart[2].TOT_AMT, baseChart[2].TOT_AMT],
-                        backgroundColor: "rgba(0, 156, 255, .5)",
-                        fill: true
-                    },
-                    {
-                        label: "평가금액",
-                        data: [baseChart[0].TOT_ESTM_AMT, baseChart[2].TOT_ESTM_AMT, baseChart[2].TOT_ESTM_AMT],
-                        backgroundColor: "rgba(0, 156, 255, .3)",
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true
-            }
-        });
 
-        var ratioChart = [[${ratioChart}]];
-        var estmRatio = Number(ratioChart[0].ESTM_RATIO);
-        
-
-        // Pie Chart
-        var ctx5 = $("#pie-chart").get(0).getContext("2d");
-        var myChart5 = new Chart(ctx5, {
-            type: "pie",
-            data: {
-                labels: [ratioChart[0].ITEM_SHORT],
-                datasets: [{
-                    backgroundColor: [
-                        "rgba(0, 156, 255, .7)"
-                    ],
-                    data : [estmRatio]
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
-
-        var fundRatioChart = [[${fundRatioChart}]];
-        var fundRatio = Number(fundRatioChart[0].ESTM_RATIO);
-        var fundRatio1 = Number(fundRatioChart[1].ESTM_RATIO);
-        var fundRatio2 = Number(fundRatioChart[2].ESTM_RATIO);
-        var fundRatio3 = Number(fundRatioChart[3].ESTM_RATIO);
-        var fundRatio4 = Number(fundRatioChart[4].ESTM_RATIO);
-        var fundRatio5 = Number(fundRatioChart[5].ESTM_RATIO);
-        var fundRatio6 = Number(fundRatioChart[6].ESTM_RATIO);
-
-        // Doughnut Chart
-        var ctx6 = $("#fund-chart").get(0).getContext("2d");
-        var myChart6 = new Chart(ctx6, {
-            type: "doughnut",
-            data: {
-                labels: [fundRatioChart[0].ITEM_SHORT, fundRatioChart[1].ITEM_SHORT, fundRatioChart[2].ITEM_SHORT, fundRatioChart[3].ITEM_SHORT, fundRatioChart[4].ITEM_SHORT, fundRatioChart[5].ITEM_SHORT, fundRatioChart[6].ITEM_SHORT],
-                datasets: [{
-                    backgroundColor: [
-                        "rgba(0, 156, 255, .7)",
-                        "rgba(0, 156, 255, .6)",
-                        "rgba(0, 156, 255, .5)",
-                        "rgba(0, 156, 255, .4)",
-                        "rgba(0, 156, 255, .3)",
-                        "rgba(0, 156, 255, .2)",
-                        "rgba(0, 156, 255, .1)"
-                    ],
-                    data: [fundRatio, fundRatio1, fundRatio2, fundRatio3, fundRatio4, fundRatio5, fundRatio6]
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
 
         <!-- 거래내역 등록 -->
         function updateTransaction() {
